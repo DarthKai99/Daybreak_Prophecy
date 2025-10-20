@@ -32,7 +32,10 @@ public class Enemy : MonoBehaviour
     void FixedUpdate()
     {
         timer += Time.fixedDeltaTime;
-        if (timer >= nextChange) PickNewDir();
+        if (timer >= nextChange)
+        {
+            PickNewDir(); 
+        }
 
         rb.MovePosition(rb.position + dir * speed * Time.fixedDeltaTime);
     }
@@ -49,21 +52,38 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int amount)
     {
         hp -= amount;
-        if (hp <= 0) Die();
+        if (hp <= 0)
+        {
+            Die();
+        }
     }
 
     void Die()
     {
         // Award XP
         var playerStats = FindFirstObjectByType<PlayerStats>();
-        if (playerStats) playerStats.AddXP(5);
+        if (playerStats)
+        {
+            playerStats.AddXP(5); 
+        }
 
         // Drop table: 0 = nothing, 1 = health, 2 = mp
         int roll = Random.Range(0, 3);
         if (roll == 1 && healthPickupPrefab)
+        {
             Instantiate(healthPickupPrefab, transform.position, Quaternion.identity);
+        }
         else if (roll == 2 && mpPickupPrefab)
+        {
             Instantiate(mpPickupPrefab, transform.position, Quaternion.identity);
+        }
+        
+        // >>> Tell the TimingSystem a kill happened <<<
+        var ts = FindFirstObjectByType<TimingSystem>();
+        if (ts)
+        {
+            ts.ReportEnemyKilled(); 
+        }
 
         Destroy(gameObject);
     }
@@ -75,6 +95,9 @@ public class Enemy : MonoBehaviour
     void TryDamagePlayer(GameObject other)
     {
         var ps = other.GetComponent<PlayerStats>();
-        if (ps != null) ps.TakeDamage(touchDamage);
+        if (ps != null)
+        {
+            ps.TakeDamage(touchDamage);
+        }
     }
 }

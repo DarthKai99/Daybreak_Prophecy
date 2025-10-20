@@ -35,10 +35,10 @@ public class PlayerHUD : MonoBehaviour
 
     // Helpers to read private fields via properties if you later expose them
     // For now, we just cache via the initial events; these are placeholders
-    int GetHP()       => 0; // not used after events are wired
-    int GetMaxHP()    => 100;
-    int GetMP()       => 0;
-    int GetMaxMP()    => 100;
+    int GetHP()       => 10; // not used after events are wired
+    int GetMaxHP()    => 10;
+    int GetMP()       => 10;
+    int GetMaxMP()    => 10;
     int GetXP()       => 0;
     int GetXPToNext() => 25;
 }

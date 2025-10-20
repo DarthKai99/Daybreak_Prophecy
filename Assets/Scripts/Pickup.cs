@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-    public enum Kind { Health, MP }
+    public enum Kind { Health, MP ,EXP }
     public Kind type = Kind.Health;
     public int amount = 3;
 
