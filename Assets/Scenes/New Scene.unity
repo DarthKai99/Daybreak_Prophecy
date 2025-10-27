@@ -2938,7 +2938,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_movement
   speed: 6
-  fourWayOnly: 1
+  sprintMultiplier: 1.5
+  fourWayOnly: 0
   eye: {fileID: 1717388216}
   eyeOffsetX: 0.25
   eyeOffsetY: 0
