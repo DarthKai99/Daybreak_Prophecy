@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3064457835387755777}
   - component: {fileID: 6748746366316877358}
   - component: {fileID: 6192914923602271575}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hp pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
