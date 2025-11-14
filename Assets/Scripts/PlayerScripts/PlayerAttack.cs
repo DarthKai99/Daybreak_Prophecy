@@ -3,36 +3,50 @@ using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [SerializeField] private GameObject attackPrefab; // Prefab with AttackHitbox + trigger collider
-    [SerializeField] private float distance = 0.6f;   // How far in front of the player
-    [SerializeField] private float lifetime = 0.1f;   // How long the hitbox exists
+    [Header("Projectile Settings")]
+    [SerializeField] private GameObject projectilePrefab; // your bullet prefab (with AttackHitbox above)
+    [SerializeField] private float spawnOffset = 0.6f;
+    [SerializeField] private float fireRate = 3f; // shots per second (minigun)
     [SerializeField] private int damage = 1;
+    [SerializeField] private int mpCostPerShot = 0;
 
     private Player_movement mover;
+    private PlayerStats stats;
+    private float nextShotTime;
 
     void Awake()
     {
         mover = GetComponent<Player_movement>();
+        stats = GetComponent<PlayerStats>();
     }
 
     void Update()
     {
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-            DoAttack();
+        if (Keyboard.current == null || projectilePrefab == null) return;
+
+        bool fireHeld = Keyboard.current.spaceKey.isPressed; // hold to spray
+        if (!fireHeld) return;
+
+        if (Time.time >= nextShotTime)
+        {
+            ShootOnce();
+            nextShotTime = Time.time + (1f / Mathf.Max(1f, fireRate));
+        }
     }
 
-    void DoAttack()
+    void ShootOnce()
     {
-        if (!attackPrefab) return;
+        if (stats && mpCostPerShot > 0 && !stats.UseMP(mpCostPerShot)) return;
 
-        // Use last facing direction (defaults to right if you never moved)
-        Vector2 dir = mover ? (mover.FacingDir == Vector2.zero ? Vector2.right : mover.FacingDir) : Vector2.right;
-        dir = new Vector2(Mathf.Round(dir.x), Mathf.Round(dir.y)); // ensure 4-way placement
-        if (dir == Vector2.zero) dir = Vector2.right;
+        Vector2 dir = (mover && mover.FacingDir != Vector2.zero) ? mover.FacingDir : Vector2.right;
+        dir.Normalize();
 
-        Vector3 spawnPos = transform.position + (Vector3)dir.normalized * distance;
-        var go = Instantiate(attackPrefab, spawnPos, Quaternion.identity);
-        var hb = go.GetComponent<AttackHitbox>();
-        if (hb) hb.Init(damage, lifetime, gameObject);
+        Vector3 spawnPos = transform.position + (Vector3)(dir * spawnOffset);
+        var go = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
+
+        var bullet = go.GetComponent<AttackHitbox>(); // ← our new moving bullet
+        if (!bullet) bullet = go.AddComponent<AttackHitbox>();
+
+        bullet.Init(dir, damage, gameObject);
     }
 }
