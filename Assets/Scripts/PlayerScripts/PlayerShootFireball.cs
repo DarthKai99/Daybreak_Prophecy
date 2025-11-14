@@ -8,7 +8,7 @@ public class PlayerShootFireball : MonoBehaviour
     [SerializeField] private GameObject fireballPrefab; // assign in Inspector
     [SerializeField] private float spawnOffset = 0.6f;  // how far in front of player
     [SerializeField] private float cooldown = 0.25f;    // seconds between shots
-    [SerializeField] private int   damage = 1;          // damage per fireball
+    [SerializeField] private int   damage = 2;          // damage per fireball
     [SerializeField] private int   mpCost = 2;          // MP per shot
 
     private Player_movement mover;
