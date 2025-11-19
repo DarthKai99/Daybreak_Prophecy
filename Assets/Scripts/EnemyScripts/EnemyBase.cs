@@ -2,20 +2,14 @@ using UnityEngine;
 
 public class EnemyBase : MonoBehaviour
 {
-    [Header("Stats")]
+   [Header("Stats")]
     [SerializeField] protected int hp = 3;
     [SerializeField] protected float moveSpeed = 2.5f;
     [SerializeField] protected float chaseRange = 20f;
 
-    // Optional: only allow damage via ApplyProjectileDamage()
-    [SerializeField] public bool onlyProjectileDamage = false;
-
     protected Rigidbody2D rb;
     protected Transform player;
     protected bool isDead = false;
-
-    // gate to allow damage only during projectile calls
-    bool _allowDamageThisFrame = false;
 
     protected virtual void Awake()
     {
@@ -47,28 +41,17 @@ public class EnemyBase : MonoBehaviour
         Move(dirToPlayer, dist);
     }
 
-    // Default "chase" move; children override if needed
+    // Default "chase" move; children override
     protected virtual void Move(Vector2 dirToPlayer, float dist)
     {
         rb.linearVelocity = dirToPlayer * moveSpeed;
     }
 
-    // Call this from projectiles to apply damage even when onlyProjectileDamage = true
-    public void ApplyProjectileDamage(int amount)
-    {
-        _allowDamageThisFrame = true;
-        TakeDamage(amount);
-        _allowDamageThisFrame = false;
-    }
-
-    // NOTE: virtual (not override) — this is the base definition
     public virtual void TakeDamage(int amount)
     {
         if (isDead) return;
-        Debug.Log($"[{name}] TOOK {amount} (proj={_allowDamageThisFrame}) at t={Time.time}\n{System.Environment.StackTrace}");
         hp -= amount;
         if (hp <= 0) Die();
-
     }
 
     protected virtual void Die()

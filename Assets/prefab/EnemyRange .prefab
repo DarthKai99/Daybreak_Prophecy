@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2989947501890767530}
   - component: {fileID: 7264825561901842778}
   - component: {fileID: 5087205677285450175}
+  - component: {fileID: 6307912890795487840}
   - component: {fileID: 8428753064963525560}
   - component: {fileID: 6234112267736160081}
   m_Layer: 0
@@ -108,17 +109,27 @@ MonoBehaviour:
   hp: 3
   moveSpeed: 2.5
   chaseRange: 20
+  projectilePrefab: {fileID: 5618106231489262378, guid: 60dad25e3d5b54f229d7254130d6ead7, type: 3}
   desiredRange: 6
   rangeSlack: 1.5
   backAwayBoost: 1.2
-  projectilePrefab: {fileID: 6428530216226961045, guid: 4104ce550d1ac4cbcac02c94028d63c9, type: 3}
   fireCooldown: 1
   projectileDamage: 1
   projectileSpeed: 10
-  onlyProjectileDamage: 1
-  spawnBlockers:
-    serializedVersion: 2
-    m_Bits: 1
+--- !u!114 &6307912890795487840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3616851652413780705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7752f1ad5a474d28a0b4cd6157e495a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyProjectile
+  lifetime: 2
+  wallGraceTime: 0.05
 --- !u!61 &8428753064963525560
 BoxCollider2D:
   m_ObjectHideFlags: 0

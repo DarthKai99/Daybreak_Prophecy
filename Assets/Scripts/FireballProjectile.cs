@@ -43,24 +43,13 @@ public class FireballProjectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other || other.gameObject == owner) return;
+            if (!other || other.gameObject == owner) return;
 
-        // 1) Enemy? -> damage + destroy
-        var enemy = other.GetComponentInParent<EnemyBase>();
-        if (enemy != null)
-        {
-            // Use the projectile gate so it works when onlyProjectileDamage = true
-            enemy.ApplyProjectileDamage(damage);
-            Destroy(gameObject);
-            return;
-        }
+            // Hit enemy?
+            var e = other.GetComponentInParent<EnemyBase>();
+            if (e != null) { e.TakeDamage(damage); Destroy(gameObject); return; }
 
-        // 2) Wall / any solid collider? -> destroy projectile
-        if (!other.isTrigger)
-        {
-            Destroy(gameObject);
-        }
+            // Hit a solid (non-trigger) thing? Treat as wall -> destroy
+            if (!other.isTrigger) Destroy(gameObject);
     }
-
-    
 }
