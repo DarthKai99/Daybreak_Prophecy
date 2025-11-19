@@ -6,7 +6,7 @@ using UnityEngine;
 public class FireballProjectile : MonoBehaviour
 {
     [SerializeField] private float speed = 10f;
-    [SerializeField] private float lifetime = 2f;
+    [SerializeField] private float lifetime = 5f;
 
     private Rigidbody2D rb;
     private GameObject owner;
