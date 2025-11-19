@@ -5,17 +5,17 @@ using UnityEngine;
 
 public class EnemyProjectile : MonoBehaviour
 {
-    [SerializeField] private float lifetime = 2f;
-    [SerializeField] private float wallGraceTime = 0.05f; // ignore walls for first frames
+      [SerializeField] private float speed = 12f;
+    [SerializeField] private float lifetime = 2.5f;
 
-    Rigidbody2D rb;
-    Collider2D col;
-    GameObject owner;
-    int damage;
+    private Rigidbody2D rb;
+    private Collider2D col;
+    private GameObject owner;
+    private int damage;
 
-    Vector2 travelDir;
-    float travelSpeed;
-    float spawnTime;
+    // store to restore after ignores
+    private Vector2 dir;
+    private float spawnTime;
 
     void Awake()
     {
@@ -32,56 +32,48 @@ public class EnemyProjectile : MonoBehaviour
         col.isTrigger = false; // solid bullet
     }
 
-    public void Init(Vector2 dir, float speed, int dmg, GameObject ownerGO)
+    public void Init(Vector2 direction, float projSpeed, int dmg, GameObject ownerGO)
     {
-        owner = ownerGO;
+        owner  = ownerGO;
         damage = dmg;
-        travelDir = dir.normalized;
-        travelSpeed = speed;
+        dir    = direction.normalized;
+        speed  = projSpeed;
         spawnTime = Time.time;
 
-        // Don’t hit the shooter
+        // don't hit the shooter
         foreach (var oc in owner.GetComponentsInChildren<Collider2D>())
             Physics2D.IgnoreCollision(col, oc, true);
 
-        rb.linearVelocity = travelDir * travelSpeed;
+        rb.linearVelocity = dir * speed;
         Destroy(gameObject, lifetime);
     }
 
     void OnCollisionEnter2D(Collision2D c)
     {
-        var other = c.collider;
-        var otherGO = other.gameObject;
-        if (otherGO == owner) return;
+        var hitCol = c.collider;
+        var hitObj = hitCol.gameObject;
+        if (hitObj == owner) return;
 
         // 1) Player? -> damage + destroy
-        var ps = otherGO.GetComponentInParent<PlayerStats>();
-        if (ps != null)
+        if (hitObj.CompareTag("Player"))
         {
-            ps.TakeDamage(damage);
+            var ps = hitObj.GetComponentInParent<PlayerStats>();
+            if (ps != null) ps.TakeDamage(damage);
             Destroy(gameObject);
             return;
         }
 
         // 2) Enemy? -> ignore and keep flying (no friendly fire)
-        var enemy = otherGO.GetComponentInParent<EnemyBase>();
-        if (enemy != null)
+        if (hitObj.CompareTag("Enemy"))
         {
-            Physics2D.IgnoreCollision(col, other, true);
-            rb.linearVelocity = travelDir * travelSpeed;
+            Physics2D.IgnoreCollision(col, hitCol, true);
+            rb.linearVelocity = dir * speed; // (Unity 2023+: use linearVelocity)
             return;
         }
 
-        // 3) Wall/obstacle
-        // Allow a tiny grace after spawn so bullets that spawn kissing a wall don't die instantly
-        if (Time.time - spawnTime < wallGraceTime)
-        {
-            Physics2D.IgnoreCollision(col, other, true);
-            rb.linearVelocity = travelDir * travelSpeed;
-
-            Destroy(gameObject);
-            return;
-        }
-
+        // 3) Anything else (wall/obstacle/etc) -> destroy projectile
+        Destroy(gameObject);
     }
+
 }
+
