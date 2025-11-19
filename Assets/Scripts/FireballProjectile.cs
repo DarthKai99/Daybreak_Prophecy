@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class FireballProjectile : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f;
-    [SerializeField] private float lifetime = 5f;
+    [SerializeField] private float speed = 30f;
+    [SerializeField] private float lifetime = 10f;
 
     private Rigidbody2D rb;
     private GameObject owner;
@@ -27,10 +27,10 @@ public class FireballProjectile : MonoBehaviour
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         // launch
-        rb.linearVelocity = dir.normalized * speed;
+        rb.linearVelocity = dir.normalized * this.speed;
 
         // auto-despawn
-        Destroy(gameObject, lifetime);
+        Destroy(gameObject, this.lifetime);
     }
 
     void OnTriggerEnter2D(Collider2D other)
