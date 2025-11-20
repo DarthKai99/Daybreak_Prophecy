@@ -4,53 +4,56 @@ using UnityEngine.InputSystem;
 
 public class PlayerShootFireball : MonoBehaviour
 {
-   [Header("Fireball")]
+    [Header("Fireball")]
     [SerializeField] private GameObject fireballPrefab; // assign in Inspector
     [SerializeField] private float spawnOffset = 0.6f;  // how far in front of player
     [SerializeField] private float cooldown = 0.25f;    // seconds between shots
     [SerializeField] private int   damage = 2;          // damage per fireball
     [SerializeField] private int   mpCost = 2;          // MP per shot
 
-    private Player_movement mover;
     private PlayerStats stats;
     private float nextShootTime = 0f;
 
     void Awake()
     {
-        mover = GetComponent<Player_movement>();
         stats = GetComponent<PlayerStats>();
     }
 
     void Update()
     {
-        if (Keyboard.current == null) return;
+        // Ensure InputSystem and prefab exist
+        if (Mouse.current == null || fireballPrefab == null) return;
 
+        // press F (or hold) to shoot
+        //isPressed if you want it to hold to shoot
         if (Keyboard.current.fKey.wasPressedThisFrame)
-            TryShoot();
+        {
+            TryShootTowardMouse();
+        }
     }
 
-    void TryShoot()
+    void TryShootTowardMouse()
     {
         if (Time.time < nextShootTime) return;
+        if (stats && mpCost > 0 && !stats.UseMP(mpCost)) return;
 
-        // MP check (optional)
-        if (stats != null && !stats.UseMP(mpCost))
-        {
-            // TODO: show "Not enough MP"
-            return;
-        }
+        // Convert screen-space mouse to world-space
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        mouseWorld.z = 0f;
 
-        Vector2 dir = mover ? mover.FacingDir : Vector2.right;
-        if (dir == Vector2.zero) dir = Vector2.right;          // fallback
-        dir = new Vector2(Mathf.Round(dir.x), Mathf.Round(dir.y)); // ensure 4-way
+        // Compute direction
+        Vector2 dir = (mouseWorld - transform.position).normalized;
 
-        Vector3 pos = transform.position + (Vector3)(dir.normalized * spawnOffset);
+        // Spawn position slightly in front of the player
+        Vector3 spawnPos = transform.position + (Vector3)(dir * spawnOffset);
 
-        var go = Instantiate(fireballPrefab, pos, Quaternion.identity);
+        // Spawn fireball prefab
+        var go = Instantiate(fireballPrefab, spawnPos, Quaternion.identity);
+
+        // Make sure projectile script exists and initialize
         var proj = go.GetComponent<FireballProjectile>();
-        if (proj != null) proj.Init(dir,
-                                    damage,
-                                    gameObject);
+        if (!proj) proj = go.AddComponent<FireballProjectile>();
+        proj.Init(dir, damage, gameObject);
 
         nextShootTime = Time.time + cooldown;
     }

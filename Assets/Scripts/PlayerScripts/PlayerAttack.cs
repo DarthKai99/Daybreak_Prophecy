@@ -10,43 +10,46 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private int damage = 1;
     [SerializeField] private int mpCostPerShot = 0;
 
-    private Player_movement mover;
     private PlayerStats stats;
     private float nextShotTime;
 
     void Awake()
     {
-        mover = GetComponent<Player_movement>();
         stats = GetComponent<PlayerStats>();
     }
 
     void Update()
     {
-        if (Keyboard.current == null || projectilePrefab == null) return;
+        if (Mouse.current == null || projectilePrefab == null) return;
 
-        bool fireHeld = Keyboard.current.spaceKey.isPressed; // hold to spray
+        bool fireHeld = Mouse.current.leftButton.isPressed; // hold to shoot with LMB
         if (!fireHeld) return;
 
         if (Time.time >= nextShotTime)
         {
-            ShootOnce();
+            ShootTowardMouse();
             nextShotTime = Time.time + (1f / Mathf.Max(1f, fireRate));
         }
     }
 
-    void ShootOnce()
+    void ShootTowardMouse()
     {
         if (stats && mpCostPerShot > 0 && !stats.UseMP(mpCostPerShot)) return;
 
-        Vector2 dir = (mover && mover.FacingDir != Vector2.zero) ? mover.FacingDir : Vector2.right;
-        dir.Normalize();
+        // Convert mouse position (screen) to world position
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        mouseWorld.z = 0f;
 
+        // Direction from player to mouse
+        Vector2 dir = (mouseWorld - transform.position).normalized;
+
+        // Spawn projectile slightly in front of the player
         Vector3 spawnPos = transform.position + (Vector3)(dir * spawnOffset);
         var go = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
 
-        var bullet = go.GetComponent<AttackHitbox>(); // ← our new moving bullet
-        if (!bullet) bullet = go.AddComponent<AttackHitbox>();
-
-        bullet.Init(dir, damage, gameObject);
+        // Launch projectile
+        var proj = go.GetComponent<FireballProjectile>();
+        if (!proj) proj = go.AddComponent<FireballProjectile>();
+        proj.Init(dir, damage, gameObject);
     }
 }
