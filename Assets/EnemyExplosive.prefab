@@ -12,8 +12,7 @@ GameObject:
   - component: {fileID: 8341943820773997979}
   - component: {fileID: 5664856020083158090}
   - component: {fileID: 7735007782783010824}
-  - component: {fileID: -7613688697121000546}
-  - component: {fileID: -4138140353115517230}
+  - component: {fileID: 1178835440621727712}
   m_Layer: 0
   m_Name: EnemyExplosive
   m_TagString: Enemy
@@ -80,7 +79,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 207896019
+  m_SortingLayerID: 457828777
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
@@ -167,7 +166,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-7613688697121000546
+--- !u!114 &1178835440621727712
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -176,13 +175,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 7738272725993273129}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f0c61f8d7947024d949ad12367450c6, type: 3}
+  m_Script: {fileID: 11500000, guid: bf0c2c02b0be14109aaf909f94b6b9e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyExplosive
   hp: 3
   moveSpeed: 2.5
   chaseRange: 20
   onlyProjectileDamage: 0
+  useDrops: 1
+  dropChance: 0.25
+  hpShare: 0.5
+  hpPickupPrefab: {fileID: 427810894573171162, guid: bdfc4cbeb8ad342a5993a12b9b11e3b4, type: 3}
+  mpPickupPrefab: {fileID: 5021804043057128019, guid: d857643bd30a8409c97a6dd0ccdc82a7, type: 3}
+  chooseEligibleAtSpawn: 0
+  spawnEligibleChance: 0.5
   explodeRadius: 2.5
   explodeDamage: 4
   explodeMask:
@@ -190,19 +196,3 @@ MonoBehaviour:
     m_Bits: 0
   explodeOnShot: 1
   hitsToExplodeOnShot: 2
---- !u!114 &-4138140353115517230
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7738272725993273129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80a1bf06e67027642a5c52b9bfc6f22a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyBase
-  hp: 3
-  moveSpeed: 2.5
-  chaseRange: 20
-  onlyProjectileDamage: 0
