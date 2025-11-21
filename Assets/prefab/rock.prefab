@@ -78,8 +78,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: -866550183
-  m_SortingLayer: 2
+  m_SortingLayerID: 263905225
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
@@ -150,3 +150,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fe419a14a2ae45528bc74eff27ee1f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackHitbox
+  speed: 16
+  lifetime: 2
+  enemyMask:
+    serializedVersion: 2
+    m_Bits: 0

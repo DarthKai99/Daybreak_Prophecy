@@ -80,8 +80,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 263905225
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.76862746, g: 0.76862746, b: 0.76862746, a: 1}
@@ -106,14 +106,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b7522f57f69c419b8ba80a3e7d0df51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  type: 0
   hp: 2
+  moveSpeed: 2.5
+  chaseRange: 20
   touchDamage: 1
-  speed: 4
-  changeDirEvery: {x: 0.8, y: 1.6}
-  healthPickupPrefab: {fileID: 427810894573171162, guid: bdfc4cbeb8ad342a5993a12b9b11e3b4, type: 3}
-  mpPickupPrefab: {fileID: 5021804043057128019, guid: d857643bd30a8409c97a6dd0ccdc82a7, type: 3}
-  healthAmount: 3
-  mpAmount: 3
+  touchDamageCooldown: 0.5
+  explodeRange: 1.2
+  explodeDamage: 4
+  explodeRadius: 2.5
+  explodeOnShot: 1
+  explodeHitMask:
+    serializedVersion: 2
+    m_Bits: 0
+  projectilePrefab: {fileID: 0}
+  desiredRange: 6
+  keepRangeSlack: 1.5
+  fireCooldown: 1
+  projectileDamage: 1
+  projectileSpeed: 10
 --- !u!114 &4546666840316691883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,6 +137,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fe419a14a2ae45528bc74eff27ee1f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackHitbox
+  speed: 16
+  lifetime: 2
+  enemyMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!50 &308240528783280448
 Rigidbody2D:
   serializedVersion: 5
