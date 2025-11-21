@@ -5,15 +5,18 @@ TagManager:
   serializedVersion: 3
   tags:
   - Enemy
+  - Wall
+  - bullet
+  - Fireball
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Layer 1
+  - 
   - Water
   - UI
-  - Layer 2
-  - Layer 3
+  - 
+  - 
   - 
   - 
   - 
@@ -43,16 +46,13 @@ TagManager:
     uniqueID: 0
     locked: 0
   - name: New Layer 1
-    uniqueID: 207896019
+    uniqueID: 457828777
     locked: 0
   - name: New Layer 2
-    uniqueID: 3428417113
+    uniqueID: 2188915177
     locked: 0
   - name: New Layer 3
-    uniqueID: 3762708179
-    locked: 0
-  - name: Player and Enemies
-    uniqueID: 1698147373
+    uniqueID: 1022945621
     locked: 0
   m_RenderingLayers:
   - Default
