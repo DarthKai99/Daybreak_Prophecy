@@ -10,6 +10,23 @@ public class EnemyBase : MonoBehaviour
     // Optional: only allow damage via ApplyProjectileDamage()
     [SerializeField] public bool onlyProjectileDamage = false;
 
+    // for our drops pick up for MP and HP
+
+    // EnemyBase fields (put near your other [SerializeField]s)
+    [Header("Drops")]
+    [SerializeField] private bool useDrops = true;         // turn drops on/off per enemy prefab
+    [Range(0f, 1f)] [SerializeField] private float dropChance = 0.25f; // chance *on death*
+    [Range(0f, 1f)] [SerializeField] private float hpShare = 0.5f;     // of drops, % that are HP
+    [SerializeField] private GameObject hpPickupPrefab;    // assign in Inspector
+    [SerializeField] private GameObject mpPickupPrefab;    // assign in Inspector
+
+    // Optional: only SOME enemies are eligible from the moment they spawn
+    [SerializeField] private bool chooseEligibleAtSpawn = false;
+    [Range(0f, 1f)] [SerializeField] private float spawnEligibleChance = 0.5f;
+
+    private bool eligibleThisSpawn = true;  // decided in Awake if chooseEligibleAtSpawn = true
+
+
     protected Rigidbody2D rb;
     protected Transform player;
     protected bool isDead = false;
@@ -25,7 +42,13 @@ public class EnemyBase : MonoBehaviour
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         var stats = FindFirstObjectByType<PlayerStats>();
-        if (stats) player = stats.transform;
+        if (stats) {
+            player = stats.transform;
+        }
+
+        if (chooseEligibleAtSpawn){
+            eligibleThisSpawn = (Random.value < spawnEligibleChance);
+        }
     }
 
     protected virtual void FixedUpdate()
@@ -82,6 +105,28 @@ public class EnemyBase : MonoBehaviour
         var ts = FindFirstObjectByType<TimingSystem>();
         if (ts) ts.ReportEnemyKilled();
 
+            TryDrop();                // <-- add this line
+
+
         Destroy(gameObject);
+    }
+
+    void TryDrop()
+    {
+        if (!useDrops) return;
+        if (!eligibleThisSpawn) return;                     // if using the per-spawn eligibility
+        if (!hpPickupPrefab && !mpPickupPrefab) return;
+
+        // Per-death roll: only sometimes drop
+        if (Random.value > dropChance) return;              // Random.value is 0..1 float
+
+        bool dropHP = (Random.value < hpShare);
+        GameObject prefab = dropHP ? hpPickupPrefab : mpPickupPrefab;
+
+        // fallback if one prefab not assigned
+        if (!prefab) prefab = dropHP ? mpPickupPrefab : hpPickupPrefab;
+        if (!prefab) return;
+
+        Instantiate(prefab, transform.position, Quaternion.identity);
     }
 }

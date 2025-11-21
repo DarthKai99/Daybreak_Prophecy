@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 8341943820773997979}
   - component: {fileID: 5664856020083158090}
   - component: {fileID: 834449367886162123}
-  - component: {fileID: 5277313774017644027}
   - component: {fileID: 7735007782783010824}
   m_Layer: 0
   m_Name: EnemyExplosive
@@ -155,27 +154,21 @@ MonoBehaviour:
   hp: 3
   moveSpeed: 2.5
   chaseRange: 20
+  onlyProjectileDamage: 0
+  useDrops: 1
+  dropChance: 0.25
+  hpShare: 0.5
+  hpPickupPrefab: {fileID: 427810894573171162, guid: bdfc4cbeb8ad342a5993a12b9b11e3b4, type: 3}
+  mpPickupPrefab: {fileID: 5021804043057128019, guid: d857643bd30a8409c97a6dd0ccdc82a7, type: 3}
+  chooseEligibleAtSpawn: 0
+  spawnEligibleChance: 0.5
   explodeRadius: 2.5
   explodeDamage: 4
-  explodeOnShot: 1
   explodeMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &5277313774017644027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7738272725993273129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08367db43f4f44ffe9881b0ab5fa1256, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyBase
-  hp: 3
-  moveSpeed: 2.5
-  chaseRange: 20
+  explodeOnShot: 1
+  hitsToExplodeOnShot: 2
 --- !u!50 &7735007782783010824
 Rigidbody2D:
   serializedVersion: 5
