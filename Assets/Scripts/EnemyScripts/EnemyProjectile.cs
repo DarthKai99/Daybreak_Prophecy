@@ -9,7 +9,6 @@ public class EnemyProjectile : MonoBehaviour
 
     private Rigidbody2D rb;
     private Collider2D col;
-
     private GameObject owner;
     private int damage;
     private Vector2 dir;
@@ -20,19 +19,18 @@ public class EnemyProjectile : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
 
-        rb.bodyType = RigidbodyType2D.Dynamic;
+        // Kinematic-style bullet: moved by code, not physics forces
+        rb.bodyType = RigidbodyType2D.Kinematic;    // <-- use bodyType instead of isKinematic
         rb.gravityScale = 0f;
-        rb.linearDamping = 0f;
-        rb.angularDamping = 0f;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         rb.freezeRotation = true;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
 
-        col.isTrigger = false;        // solid so it hits walls
-        col.sharedMaterial = null;    // no bounce material
+        // Trigger so it doesn't physically push anything
+        col.isTrigger = true;
+        col.sharedMaterial = null;
     }
 
-    // This is the signature your EnemyRanged calls
     public void Init(Vector2 direction, float projSpeed, int dmg, GameObject ownerGO)
     {
         owner  = ownerGO;
@@ -40,27 +38,27 @@ public class EnemyProjectile : MonoBehaviour
         dir    = direction.normalized;
         speed  = projSpeed;
 
-        // ignore the shooter's colliders
-        foreach (var oc in owner.GetComponentsInChildren<Collider2D>())
-            Physics2D.IgnoreCollision(col, oc, true);
-
         rb.linearVelocity = dir * speed;
+
+        // auto-destroy after lifetime in case it never hits anything
         Destroy(gameObject, lifetime);
     }
 
-    // Optional overload (lets you call Init(dir, dmg, owner) if you want)
+    // if you want to call Init(dir, dmg, owner) without speed:
     public void Init(Vector2 direction, int dmg, GameObject ownerGO)
     {
         Init(direction, speed == 0f ? 12f : speed, dmg, ownerGO);
     }
 
-    void OnCollisionEnter2D(Collision2D c)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        var hit = c.collider;
-        var go = hit.gameObject;
-        if (go == owner) return;
+        GameObject go = other.gameObject;
 
-        // Player? -> damage + destroy
+        // 1) Never hit the owner
+        if (go == owner)
+            return;
+
+        // 2) Player: damage + destroy
         if (go.CompareTag("Player"))
         {
             var ps = go.GetComponentInParent<PlayerStats>();
@@ -69,24 +67,25 @@ public class EnemyProjectile : MonoBehaviour
             return;
         }
 
-        // Player bullet? -> destroy THIS projectile (leave the player bullet)
-        if (go.GetComponentInParent<FireballProjectile>() != null || go.CompareTag("bullet"))
+        // 3) Enemy: ignore and keep flying (no damage)
+        if (go.CompareTag("Enemy"))
+        {
+            // just ignore this overlap
+            return;
+        }
+
+        // 4) Player bullet: destroy this projectile
+        //    (adjust tag / component name to match your project)
+        if (go.CompareTag("bullet") || go.GetComponentInParent<FireballProjectile>() != null)
         {
             Destroy(gameObject);
             return;
         }
 
-        // Enemy? -> ignore and keep flying
-        if (go.CompareTag("Enemy"))
-        {
-            Physics2D.IgnoreCollision(col, hit, true);
-            rb.linearVelocity = dir * speed;
-            return;
-        }
-
-        // Wall / anything else -> destroy
+        // 5) Everything else (walls, ground, props, etc.) -> destroy
         Destroy(gameObject);
     }
+
 
 }
 

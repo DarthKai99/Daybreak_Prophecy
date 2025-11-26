@@ -8,6 +8,8 @@ public class AttackHitbox : MonoBehaviour
     [SerializeField] private float lifetime = 2f;
     [SerializeField] private LayerMask enemyMask; // set to Enemy layer(s) in Inspector
 
+
+    private bool hasHit = false;
     private Rigidbody2D rb;
     private Collider2D col;
     private int damage = 1;
@@ -47,27 +49,29 @@ public class AttackHitbox : MonoBehaviour
         Destroy(gameObject, life);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+ void OnTriggerEnter2D(Collider2D other)
     {
+        if (hasHit) return;                      // <<< guard
         if (!other || other.gameObject == owner) return;
 
-        // Hit enemy by layer?
         bool isEnemyLayer = (enemyMask.value & (1 << other.gameObject.layer)) != 0;
 
         if (isEnemyLayer)
         {
-            // Works even if collider is on a child
             var enemy = other.GetComponentInParent<EnemyBase>();
             if (enemy != null)
             {
+                hasHit = true;                   // <<< prevent any more hits
                 enemy.TakeDamage(damage);
                 Destroy(gameObject);
                 return;
             }
         }
 
-        // Hit a solid wall? (non-trigger)
         if (!other.isTrigger)
+        {
+            hasHit = true;
             Destroy(gameObject);
+        }
     }
 }

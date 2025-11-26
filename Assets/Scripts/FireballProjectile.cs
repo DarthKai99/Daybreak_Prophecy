@@ -7,12 +7,14 @@ public class FireballProjectile : MonoBehaviour
 {
     [SerializeField] private float speed = 16f;
     [SerializeField] private float lifetime = 2f;
-    [SerializeField] private LayerMask enemyMask; // set to Enemy layer(s) in Inspector
+    [SerializeField] private LayerMask enemyMask; // optional, if you want layer filtering
 
     private Rigidbody2D rb;
     private Collider2D col;
     private GameObject owner;
     private int damage;
+
+    private bool hasHit = false;   // prevent multiple hits
 
     void Awake()
     {
@@ -43,14 +45,20 @@ public class FireballProjectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (hasHit) return;
         if (!other || other.gameObject == owner) return;
 
+        GameObject go = other.gameObject;
+
+        // OPTIONAL: if you want to use the enemyMask, check layer here:
+        // bool isEnemyLayer = (enemyMask.value & (1 << go.layer)) != 0;
+
         // 1) Enemy? -> damage + destroy
-        var enemy = other.GetComponentInParent<EnemyBase>();
+        var enemy = go.GetComponentInParent<EnemyBase>();
         if (enemy != null)
         {
-            // Use the projectile gate so it works when onlyProjectileDamage = true
-            enemy.ApplyProjectileDamage(damage);
+            hasHit = true;
+            enemy.TakeDamage(damage);   // <-- THIS is what was missing
             Destroy(gameObject);
             return;
         }
@@ -58,6 +66,7 @@ public class FireballProjectile : MonoBehaviour
         // 2) Wall / any solid collider? -> destroy projectile
         if (!other.isTrigger)
         {
+            hasHit = true;
             Destroy(gameObject);
         }
     }

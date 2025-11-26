@@ -7,12 +7,9 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] protected float moveSpeed = 2.5f;
     [SerializeField] protected float chaseRange = 20f;
 
-    // Optional: only allow damage via ApplyProjectileDamage()
-    [SerializeField] public bool onlyProjectileDamage = false;
+ 
 
-    // for our drops pick up for MP and HP
-
-    // EnemyBase fields (put near your other [SerializeField]s)
+    // Drops
     [Header("Drops")]
     [SerializeField] private bool useDrops = true;         // turn drops on/off per enemy prefab
     [Range(0f, 1f)] [SerializeField] private float dropChance = 0.25f; // chance *on death*
@@ -23,16 +20,25 @@ public class EnemyBase : MonoBehaviour
     // Optional: only SOME enemies are eligible from the moment they spawn
     [SerializeField] private bool chooseEligibleAtSpawn = false;
     [Range(0f, 1f)] [SerializeField] private float spawnEligibleChance = 0.5f;
-
     private bool eligibleThisSpawn = true;  // decided in Awake if chooseEligibleAtSpawn = true
 
+    [Header("Wander Settings")]
+    [SerializeField] private bool enableWander = true;
+    [SerializeField] private float wanderRadius = 5f;
+    [Range(0f, 1f)] [SerializeField] private float wanderSpeedMultiplier = 0.6f;
+    [SerializeField] private float minWanderInterval = 1.5f;
+    [SerializeField] private float maxWanderInterval = 3.5f;
 
     protected Rigidbody2D rb;
     protected Transform player;
     protected bool isDead = false;
 
-    // gate to allow damage only during projectile calls
-    bool _allowDamageThisFrame = false;
+
+
+    // wander state
+    private Vector2 spawnPosition;
+    private Vector2 wanderTarget;
+    private float nextWanderPickTime = 0f;
 
     protected virtual void Awake()
     {
@@ -42,32 +48,56 @@ public class EnemyBase : MonoBehaviour
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         var stats = FindFirstObjectByType<PlayerStats>();
-        if (stats) {
+        if (stats)
+        {
             player = stats.transform;
         }
 
-        if (chooseEligibleAtSpawn){
+        if (chooseEligibleAtSpawn)
+        {
             eligibleThisSpawn = (Random.value < spawnEligibleChance);
         }
+
+        // record where this enemy spawned – wander centers around this
+        spawnPosition = transform.position;
+        wanderTarget = spawnPosition;
+        nextWanderPickTime = Time.time;
     }
 
     protected virtual void FixedUpdate()
     {
-        if (isDead || !player)
+        if (isDead)
         {
             rb.linearVelocity = Vector2.zero;
             return;
         }
 
-        float dist = Vector2.Distance(transform.position, player.position);
-        if (dist > chaseRange)
+        float distToPlayer = Mathf.Infinity;
+        bool hasPlayer = player != null;
+
+        if (hasPlayer)
         {
-            rb.linearVelocity = Vector2.zero;
-            return;
+            distToPlayer = Vector2.Distance(transform.position, player.position);
         }
 
-        Vector2 dirToPlayer = ((Vector2)player.position - (Vector2)transform.position).normalized;
-        Move(dirToPlayer, dist);
+        // If we have a player in range → chase (child overrides Move)
+        if (hasPlayer && distToPlayer <= chaseRange)
+        {
+            Vector2 dirToPlayer = ((Vector2)player.position - (Vector2)transform.position).normalized;
+            Move(dirToPlayer, distToPlayer);
+        }
+        else
+        {
+            // Outside chase range or no player: wander or idle
+            if (enableWander)
+            {
+                Wander();
+            }
+            else
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+        }
     }
 
     // Default "chase" move; children override if needed
@@ -76,22 +106,36 @@ public class EnemyBase : MonoBehaviour
         rb.linearVelocity = dirToPlayer * moveSpeed;
     }
 
-    // Call this from projectiles to apply damage even when onlyProjectileDamage = true
-    public void ApplyProjectileDamage(int amount)
+    // --- Wander logic ---
+    private void Wander()
     {
-        _allowDamageThisFrame = true;
-        TakeDamage(amount);
-        _allowDamageThisFrame = false;
+        // How close is current position to wander target?
+        Vector2 pos = transform.position;
+        float sqrDist = (wanderTarget - pos).sqrMagnitude;
+        bool reachedTarget = sqrDist < 0.1f * 0.1f;
+
+        // Time to pick a new random point?
+        if (Time.time >= nextWanderPickTime || reachedTarget)
+        {
+            Vector2 offset = Random.insideUnitCircle * wanderRadius;
+            wanderTarget = spawnPosition + offset;
+
+            float interval = Random.Range(minWanderInterval, maxWanderInterval);
+            nextWanderPickTime = Time.time + interval;
+        }
+
+        Vector2 dir = (wanderTarget - pos).normalized;
+        rb.linearVelocity = dir * moveSpeed * wanderSpeedMultiplier;
     }
 
+    // Call this from projectiles to apply damage even when onlyProjectileDamage = true
+ 
     // NOTE: virtual (not override) — this is the base definition
     public virtual void TakeDamage(int amount)
     {
         if (isDead) return;
-        Debug.Log($"[{name}] TOOK {amount} (proj={_allowDamageThisFrame}) at t={Time.time}\n{System.Environment.StackTrace}");
         hp -= amount;
         if (hp <= 0) Die();
-
     }
 
     protected virtual void Die()
@@ -105,20 +149,18 @@ public class EnemyBase : MonoBehaviour
         var ts = FindFirstObjectByType<TimingSystem>();
         if (ts) ts.ReportEnemyKilled();
 
-            TryDrop();                // <-- add this line
-
-
+        TryDrop();
         Destroy(gameObject);
     }
 
     void TryDrop()
     {
         if (!useDrops) return;
-        if (!eligibleThisSpawn) return;                     // if using the per-spawn eligibility
+        if (!eligibleThisSpawn) return;
         if (!hpPickupPrefab && !mpPickupPrefab) return;
 
         // Per-death roll: only sometimes drop
-        if (Random.value > dropChance) return;              // Random.value is 0..1 float
+        if (Random.value > dropChance) return;
 
         bool dropHP = (Random.value < hpShare);
         GameObject prefab = dropHP ? hpPickupPrefab : mpPickupPrefab;
@@ -128,5 +170,32 @@ public class EnemyBase : MonoBehaviour
         if (!prefab) return;
 
         Instantiate(prefab, transform.position, Quaternion.identity);
+    }
+
+    // --- Gizmos: visualize chase + wander radius ---
+    private void OnDrawGizmosSelected()
+    {
+        // chase range (red)
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, chaseRange);
+
+        // wander radius (cyan) around spawn position if possible
+        Gizmos.color = Color.cyan;
+
+        Vector3 center;
+        if (Application.isPlaying)
+        {
+            center = spawnPosition;
+        }
+        else
+        {
+            // in edit mode, use current position as "spawn"
+            center = transform.position;
+        }
+
+        if (enableWander)
+        {
+            Gizmos.DrawWireSphere(center, wanderRadius);
+        }
     }
 }

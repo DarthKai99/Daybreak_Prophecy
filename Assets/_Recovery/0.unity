@@ -4839,7 +4839,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35ee0b90c48f14d638b9781a1c6ddca3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpawnPoint
+  m_EditorClassIdentifier: '::'
   enemyPrefabs:
   - {fileID: 7860755399036040224, guid: 0fddb1a0a308a430abd51219bb305495, type: 3}
   - {fileID: 3616851652413780705, guid: cb383fcb09ddc4df0bd9ee13e838e97c, type: 3}

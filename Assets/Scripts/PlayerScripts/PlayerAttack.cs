@@ -47,9 +47,9 @@ public class PlayerAttack : MonoBehaviour
         Vector3 spawnPos = transform.position + (Vector3)(dir * spawnOffset);
         var go = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
 
-        // Launch projectile
-        var proj = go.GetComponent<FireballProjectile>();
-        if (!proj) proj = go.AddComponent<FireballProjectile>();
+        // INSTEAD of FireballProjectile:
+        var proj = go.GetComponent<AttackHitbox>();
+        if (!proj) proj = go.AddComponent<AttackHitbox>();
         proj.Init(dir, damage, gameObject);
     }
 }
