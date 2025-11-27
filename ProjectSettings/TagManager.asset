@@ -54,5 +54,8 @@ TagManager:
   - name: New Layer 3
     uniqueID: 1022945621
     locked: 0
+  - name: Enemies and Players
+    uniqueID: 263905225
+    locked: 0
   m_RenderingLayers:
   - Default
