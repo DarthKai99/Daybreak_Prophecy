@@ -3,20 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags:
-  - Enemy
-  - Wall
-  - bullet
-  - Fireball
+  tags: []
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Layer 1
   - Water
   - UI
-  - 
-  - 
+  - Layer 2
+  - Layer 3
   - 
   - 
   - 
@@ -45,17 +41,28 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+<<<<<<< Updated upstream
   - name: New Layer 1
-    uniqueID: 457828777
+    uniqueID: 207896019
     locked: 0
   - name: New Layer 2
-    uniqueID: 2188915177
+    uniqueID: 3428417113
     locked: 0
   - name: New Layer 3
-    uniqueID: 1022945621
+    uniqueID: 3762708179
+=======
+  - name: Behind Player
+    uniqueID: 457828777
     locked: 0
-  - name: Enemies and Players
-    uniqueID: 263905225
+  - name: Foliage Layer
+    uniqueID: 1428245967
+    locked: 0
+  - name: At Level
+    uniqueID: 2188915177
+    locked: 0
+  - name: Over Player
+    uniqueID: 1022945621
+>>>>>>> Stashed changes
     locked: 0
   m_RenderingLayers:
   - Default

@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4048092024133675254}
   - component: {fileID: 6470949309489932017}
-  - component: {fileID: 1368298748131747079}
   - component: {fileID: 1479698955088807127}
   - component: {fileID: 6912460594178873162}
+  - component: {fileID: 6265982606588752148}
+  - component: {fileID: -6775317039341274320}
   m_Layer: 0
   m_Name: EnemyNormal
   m_TagString: Enemy
@@ -79,10 +80,15 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 457828777
+<<<<<<< Updated upstream:Assets/EnemyNormal.prefab
+  m_SortingLayerID: 207896019
   m_SortingLayer: 1
+=======
+  m_SortingLayerID: -2106052119
+  m_SortingLayer: 3
+>>>>>>> Stashed changes:Assets/prefab/EnemyNormal.prefab
   m_SortingOrder: 0
-  m_Sprite: {fileID: 3584719387130797482, guid: c70c0fea25e628f4a924ebb5a8a3058d, type: 3}
+  m_Sprite: {fileID: -7953338109569239842, guid: 97ac8bb45ac60294db90d0d00096a558, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -93,6 +99,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+<<<<<<< Updated upstream:Assets/EnemyNormal.prefab
+=======
 --- !u!114 &1368298748131747079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,8 +113,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4ada9a1f04b45e5a7468193e3dcaf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyNormal
-  hp: 3
-  moveSpeed: 2.5
+  hp: 10
+  moveSpeed: 4
   chaseRange: 20
   onlyProjectileDamage: 0
   useDrops: 1
@@ -118,6 +126,7 @@ MonoBehaviour:
   spawnEligibleChance: 0.5
   touchDamage: 1
   touchDamageCooldown: 0.5
+>>>>>>> Stashed changes:Assets/prefab/EnemyNormal.prefab
 --- !u!61 &1479698955088807127
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -191,3 +200,37 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &6265982606588752148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7860755399036040224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80a1bf06e67027642a5c52b9bfc6f22a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyBase
+  hp: 3
+  moveSpeed: 2.5
+  chaseRange: 20
+  onlyProjectileDamage: 0
+--- !u!114 &-6775317039341274320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7860755399036040224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db4442928275e7f41be101d15cf7bf26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyNormal
+  hp: 3
+  moveSpeed: 2.5
+  chaseRange: 20
+  onlyProjectileDamage: 0
+  touchDamage: 1
+  touchDamageCooldown: 0.5

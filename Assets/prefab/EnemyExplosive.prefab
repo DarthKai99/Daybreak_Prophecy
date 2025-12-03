@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.91, y: 6.18, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,10 +79,10 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 457828777
-  m_SortingLayer: 1
+  m_SortingLayerID: -2106052119
+  m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 2086059592706556487, guid: 96ebf017b8d152045919240d419085ca, type: 3}
+  m_Sprite: {fileID: 7077664633628130813, guid: 2e4b54a3173c5d04b97c93e221f7b3d9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -137,7 +137,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.7, y: 2.5}
   m_EdgeRadius: 0
 --- !u!114 &834449367886162123
 MonoBehaviour:
