@@ -50,15 +50,23 @@ public class FireballProjectile : MonoBehaviour
 
         GameObject go = other.gameObject;
 
-        // OPTIONAL: if you want to use the enemyMask, check layer here:
-        // bool isEnemyLayer = (enemyMask.value & (1 << go.layer)) != 0;
+        // --- NEW: collide with enemy projectile -> both die ---
+        var enemyProj = other.GetComponentInParent<EnemyProjectile>();
+        if (enemyProj != null)
+        {
+            hasHit = true;
+            Destroy(enemyProj.gameObject);
+            Destroy(gameObject);
+            return;
+        }
+        // --- END NEW ---
 
         // 1) Enemy? -> damage + destroy
         var enemy = go.GetComponentInParent<EnemyBase>();
         if (enemy != null)
         {
             hasHit = true;
-            enemy.TakeDamage(damage);   // <-- THIS is what was missing
+            enemy.TakeDamage(damage);
             Destroy(gameObject);
             return;
         }

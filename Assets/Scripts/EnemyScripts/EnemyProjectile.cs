@@ -14,13 +14,15 @@ public class EnemyProjectile : MonoBehaviour
     private Vector2 dir;
     private float speed;
 
+    private bool hasHit = false;   // <<< prevents double-processing
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
 
         // Kinematic-style bullet: moved by code, not physics forces
-        rb.bodyType = RigidbodyType2D.Kinematic;    // <-- use bodyType instead of isKinematic
+        rb.bodyType = RigidbodyType2D.Kinematic;
         rb.gravityScale = 0f;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         rb.freezeRotation = true;
@@ -44,7 +46,7 @@ public class EnemyProjectile : MonoBehaviour
         Destroy(gameObject, lifetime);
     }
 
-    // if you want to call Init(dir, dmg, owner) without speed:
+    // Optional overload
     public void Init(Vector2 direction, int dmg, GameObject ownerGO)
     {
         Init(direction, speed == 0f ? 12f : speed, dmg, ownerGO);
@@ -52,17 +54,36 @@ public class EnemyProjectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (hasHit) return;
+        if (!other) return;
+
         GameObject go = other.gameObject;
 
         // 1) Never hit the owner
         if (go == owner)
             return;
 
+        // --- NEW: projectile vs projectile cancel ---
+        var playerBullet   = other.GetComponentInParent<AttackHitbox>();
+        var playerFireball = other.GetComponentInParent<FireballProjectile>();
+
+        if (playerBullet != null || playerFireball != null)
+        {
+            hasHit = true;
+            // destroy the other projectile AND this one
+            Destroy(go);
+            Destroy(gameObject);
+            return;
+        }
+        // --- END NEW ---
+
         // 2) Player: damage + destroy
         if (go.CompareTag("Player"))
         {
             var ps = go.GetComponentInParent<PlayerStats>();
             if (ps) ps.TakeDamage(damage);
+
+            hasHit = true;
             Destroy(gameObject);
             return;
         }
@@ -70,22 +91,13 @@ public class EnemyProjectile : MonoBehaviour
         // 3) Enemy: ignore and keep flying (no damage)
         if (go.CompareTag("Enemy"))
         {
-            // just ignore this overlap
             return;
         }
 
-        // 4) Player bullet: destroy this projectile
-        //    (adjust tag / component name to match your project)
-        if (go.CompareTag("bullet") || go.GetComponentInParent<FireballProjectile>() != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        // 5) Everything else (walls, ground, props, etc.) -> destroy
+        // 4) Everything else (walls, ground, props, etc.) -> destroy
+        hasHit = true;
         Destroy(gameObject);
     }
-
 
 }
 

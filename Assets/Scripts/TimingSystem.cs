@@ -1,44 +1,41 @@
 using UnityEngine;
-using UnityEngine.InputSystem;   // NEW Input System
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using TMPro;                    // for TextMeshProUGUI
-
+using TMPro;
 
 public class TimingSystem : MonoBehaviour
 {
-    //game objects panels
     [Header("Panels")]
+    public GameObject start_panel;
     public GameObject win_panel;
     public GameObject lose_panel;
-    public GameObject victory_panel;
     public GameObject pause_panel;
 
-
-    [Header("Refs")]
+    [Header("References")]
     public PlayerStats player;
 
-    [Header("Side Quest")]
-    public int sideQuestEnemyGoal = 5;
-    public int sideQuestXpReward = 10;
-    private int sideQuestKills = 0;
-    private bool sideQuestCompleted = false;
+    [Header("UI")]
+    public TextMeshProUGUI waveLabel;      // "Wave X"
+    public TextMeshProUGUI killLabel;      // "Wave X: killed/needed"
+    public TextMeshProUGUI loseStatsLabel; // "Kills: N\nWave: X"
 
-    [Header("Kill Indicator UI")]
-    public TextMeshProUGUI killLabel;
-    public float killShowDuration = 2f;
+    [Header("Wave Settings")]
+    public bool useWaveSystem = true;
+    public int baseEnemiesPerWave = 10;    // wave1=10, wave2=20, etc.
+    public int maxWaves = 6;               // win after this wave in limited mode
 
-    [Header("Optional Kill Goal (for quests/tasks)")]
-    public bool killGoalEnabled = false;
-    public string killGoalName = "Enemies";
-    public int killGoalTarget = 10;
-    private int killGoalProgress = 0;
+    // wave state
+    private bool endlessMode = false;
+    private bool wavesRunning = false;
+    private int currentWave = 0;
+    private int enemiesToSpawnThisWave = 0;
+    private int enemiesSpawnedThisWave = 0;
+    private int enemiesKilledThisWave = 0;
 
+    // general state
     private int totalKills = 0;
-    private float killHideTimer = 0f;
-
     private bool gamePaused = false;
     private bool gameEnded = false;
-    private float victoryHideTimer = -1f; // timer for hiding the victory panel
 
     void Awake()
     {
@@ -48,163 +45,184 @@ public class TimingSystem : MonoBehaviour
     void Start()
     {
         if (!player) player = FindFirstObjectByType<PlayerStats>();
-        ShowAll(false);
-
-        if (killLabel) killLabel.gameObject.SetActive(false);
-
-        if (!sideQuestCompleted && sideQuestEnemyGoal > 0)
-            StartKillGoal(sideQuestEnemyGoal, "Enemies");
 
         if (player != null)
         {
             player.OnHPChanged += (hp, max) =>
             {
-                if (!gameEnded && hp <= 0) ShowLose();
+                if (!gameEnded && hp <= 0)
+                    ShowLose();
             };
+        }
+
+        ShowAll(false);
+
+        if (useWaveSystem)
+        {
+            if (start_panel) start_panel.SetActive(true);
+            Time.timeScale = 0f; // wait for player to choose mode
         }
     }
 
     void Update()
     {
-        // Pause handling
         bool pausePressed =
             (Keyboard.current?.pKey.wasPressedThisFrame ?? false) ||
             (Keyboard.current?.escapeKey.wasPressedThisFrame ?? false) ||
             (Gamepad.current?.startButton.wasPressedThisFrame ?? false);
 
-        if (pausePressed && !gameEnded)
+        if (pausePressed && !gameEnded && (start_panel == null || !start_panel.activeSelf))
         {
             if (gamePaused) ResumeGame();
             else PauseGame();
         }
-
-        // Auto-hide kill indicator
-        if (killLabel && killLabel.gameObject.activeSelf && !killGoalEnabled)
-        {
-            killHideTimer -= Time.unscaledDeltaTime;
-            if (killHideTimer <= 0f) killLabel.gameObject.SetActive(false);
-        }
-
-        // Auto-hide victory panel after 3 seconds
-        if (victory_panel && victory_panel.activeSelf && victoryHideTimer >= 0f)
-        {
-            victoryHideTimer -= Time.unscaledDeltaTime;
-            if (victoryHideTimer <= 0f)
-            {
-                victory_panel.SetActive(false);
-                victoryHideTimer = -1f; // reset timer
-            }
-        }
     }
 
-    // ========== PUBLIC HOOKS ==========
+    // ========== SPAWNPOINT API ==========
+
+    public bool CanSpawnEnemy()
+    {
+        if (!useWaveSystem || !wavesRunning || gameEnded) return false;
+        if (!endlessMode && currentWave > maxWaves) return false;
+        if (enemiesSpawnedThisWave >= enemiesToSpawnThisWave) return false;
+        return true;
+    }
+
+    public void RegisterEnemySpawned()
+    {
+        if (!useWaveSystem || !wavesRunning) return;
+        enemiesSpawnedThisWave++;
+    }
+
+    // called from EnemyBase.Die()
     public void ReportEnemyKilled()
     {
         if (gameEnded) return;
 
         totalKills++;
 
-        // ---- 1) Update generic kill goal ONCE (if active) ----
-        if (killGoalEnabled)
+        if (useWaveSystem && wavesRunning)
         {
-            killGoalProgress = Mathf.Clamp(killGoalProgress + 1, 0, killGoalTarget);
-            UpdateKillLabelForGoal(); // stays visible while goal active
+            enemiesKilledThisWave++;
 
-            if (killGoalProgress >= killGoalTarget)
+            if (killLabel)
             {
-                ShowVictory();
-                ClearKillGoal(); // hides the indicator
+                killLabel.gameObject.SetActive(true);
+                killLabel.text = $"Wave {currentWave}: {enemiesKilledThisWave}/{enemiesToSpawnThisWave}";
+            }
+
+            if (enemiesKilledThisWave >= enemiesToSpawnThisWave)
+            {
+                OnWaveCompleted();
             }
         }
         else
         {
-            // No active goal: show transient "Kills: N"
             if (killLabel)
             {
-                killLabel.text = $"Kills: {totalKills}";
                 killLabel.gameObject.SetActive(true);
-                killHideTimer = killShowDuration;
+                killLabel.text = $"Kills: {totalKills}";
             }
         }
+    }
 
-        // ---- 2) Side quest progress (separate from the generic goal) ----
-        if (!sideQuestCompleted && sideQuestEnemyGoal > 0)
+    // ========== WAVE FLOW ==========
+
+    public void OnStartEndless()
+    {
+        endlessMode = true;
+        BeginWaveGame();
+    }
+
+    public void OnStartLimited()
+    {
+        endlessMode = false;
+        BeginWaveGame();
+    }
+
+    private void BeginWaveGame()
+    {
+        if (!useWaveSystem) return;
+
+        if (start_panel) start_panel.SetActive(false);
+        Time.timeScale = 1f;
+
+        gameEnded = false;
+        wavesRunning = true;
+        currentWave = 0;
+        totalKills = 0;
+
+        StartNextWave();
+    }
+
+    private void StartNextWave()
+    {
+        currentWave++;
+
+        enemiesToSpawnThisWave = baseEnemiesPerWave * currentWave;
+        enemiesSpawnedThisWave = 0;
+        enemiesKilledThisWave = 0;
+
+        if (waveLabel)
         {
-            sideQuestKills++;
-            if (sideQuestKills >= sideQuestEnemyGoal)
-            {
-                sideQuestCompleted = true;
-                if (player) player.AddXP(sideQuestXpReward);
-                ShowVictory();
-                ClearKillGoal(); // if you were showing a goal for this, hide it
-            }
+            waveLabel.gameObject.SetActive(true);
+            waveLabel.text = $"Wave {currentWave}";
         }
 
+        if (killLabel)
+        {
+            killLabel.gameObject.SetActive(true);
+            killLabel.text = $"Wave {currentWave}: 0/{enemiesToSpawnThisWave}";
+        }
     }
 
-    public void ReportBossDefeated()
+    private void OnWaveCompleted()
     {
-        if (gameEnded) return;
-        ShowWin();
-        ClearKillGoal();
+        if (!useWaveSystem || !wavesRunning || gameEnded) return;
+
+        if (!endlessMode && currentWave >= maxWaves)
+        {
+            ShowWin();
+            wavesRunning = false;
+            return;
+        }
+
+        StartNextWave();
     }
 
-    public void StartKillGoal(int target, string displayName = "Enemies")
-    {
-        killGoalEnabled = true;
-        killGoalTarget = Mathf.Max(1, target);
-        killGoalProgress = 0;
-        killGoalName = string.IsNullOrWhiteSpace(displayName) ? "Enemies" : displayName;
+    // ========== PANELS / END GAME ==========
 
-        UpdateKillLabelForGoal();
-        if (killLabel) killLabel.gameObject.SetActive(true);
-    }
-
-    public void ClearKillGoal()
-    {
-        killGoalEnabled = false;
-        if (killLabel) killLabel.gameObject.SetActive(false);
-    }
-
-    // ========== PANEL LOGIC ==========
     void ShowWin()
     {
         gameEnded = true;
         Time.timeScale = 0f;
-        ShowOnly(win_panel);
+        ShowAll(false);
+        if (win_panel) win_panel.SetActive(true);
     }
 
     void ShowLose()
     {
         gameEnded = true;
         Time.timeScale = 0f;
-        ShowOnly(lose_panel);
-    }
-
-    void ShowVictory()
-    {
-        if (victory_panel)
-        {
-            victory_panel.SetActive(true);
-            victoryHideTimer = 2f; // hides after 3 seconds
-        }
-    }
-
-    void ShowOnly(GameObject panel)
-    {
         ShowAll(false);
-        if (panel) panel.SetActive(true);
+        if (lose_panel) lose_panel.SetActive(true);
+
+        if (loseStatsLabel)
+        {
+            loseStatsLabel.text = $"Kills: {totalKills}\nWave reached: {currentWave}";
+        }
     }
 
     void ShowAll(bool on)
     {
+        if (start_panel) start_panel.SetActive(on);
         if (pause_panel) pause_panel.SetActive(on);
         if (lose_panel) lose_panel.SetActive(on);
         if (win_panel) win_panel.SetActive(on);
-        if (victory_panel) victory_panel.SetActive(on);
     }
 
-    // ========== PAUSE ==========
+    // ========== PAUSE / BUTTONS ==========
+
     public void ResumeGame()
     {
         gamePaused = false;
@@ -220,7 +238,6 @@ public class TimingSystem : MonoBehaviour
         if (pause_panel) pause_panel.SetActive(true);
     }
 
-    // ========== UI BUTTONS ==========
     public void OnResumeButton() => ResumeGame();
 
     public void OnRestartButton()
@@ -233,18 +250,11 @@ public class TimingSystem : MonoBehaviour
     public void OnMainMenuButton()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu"); // replace with your menu scene name
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void OnQuitButton()
     {
         Application.Quit();
-    }
-
-    // ========== HELPERS ==========
-    void UpdateKillLabelForGoal()
-    {
-        if (!killLabel) return;
-        killLabel.text = $"{killGoalName}: {killGoalProgress}/{killGoalTarget}";
     }
 }

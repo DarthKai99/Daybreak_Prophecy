@@ -49,29 +49,40 @@ public class AttackHitbox : MonoBehaviour
         Destroy(gameObject, life);
     }
 
- void OnTriggerEnter2D(Collider2D other)
-    {
-        if (hasHit) return;                      // <<< guard
-        if (!other || other.gameObject == owner) return;
-
-        bool isEnemyLayer = (enemyMask.value & (1 << other.gameObject.layer)) != 0;
-
-        if (isEnemyLayer)
+        void OnTriggerEnter2D(Collider2D other)
         {
-            var enemy = other.GetComponentInParent<EnemyBase>();
-            if (enemy != null)
+            if (hasHit) return;
+            if (!other || other.gameObject == owner) return;
+
+            // --- NEW: collide with enemy projectile -> both die ---
+            var enemyProj = other.GetComponentInParent<EnemyProjectile>();
+            if (enemyProj != null)
             {
-                hasHit = true;                   // <<< prevent any more hits
-                enemy.TakeDamage(damage);
+                hasHit = true;
+                Destroy(enemyProj.gameObject);
                 Destroy(gameObject);
                 return;
             }
-        }
+            // --- END NEW ---
 
-        if (!other.isTrigger)
-        {
-            hasHit = true;
-            Destroy(gameObject);
+            bool isEnemyLayer = (enemyMask.value & (1 << other.gameObject.layer)) != 0;
+
+            if (isEnemyLayer)
+            {
+                var enemy = other.GetComponentInParent<EnemyBase>();
+                if (enemy != null)
+                {
+                    hasHit = true;
+                    enemy.TakeDamage(damage);
+                    Destroy(gameObject);
+                    return;
+                }
+            }
+
+            if (!other.isTrigger)
+            {
+                hasHit = true;
+                Destroy(gameObject);
+            }
         }
-    }
 }

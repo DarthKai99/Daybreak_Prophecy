@@ -1,66 +1,48 @@
-using UnityEngine;
 using System.Collections.Generic;
-
+using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
 {
     [Header("Spawner Settings")]
-    [SerializeField] private List<GameObject> enemyPrefabs;  // list of possible enemies
-    [SerializeField] private float spawnInterval = 5f;       // time between spawns
-    [SerializeField] private int maxEnemiesAlive = 5;        // maximum allowed alive
-    [SerializeField] private bool autoStart = true;          // begin automatically on Start()
+    [SerializeField] private List<GameObject> enemyPrefabs;
+    [SerializeField] private float spawnInterval = 1.5f;
 
+    private TimingSystem timing;
     private float nextSpawnTime = 0f;
 
-    void Start()
+    void Awake()
     {
-        if (autoStart)
-            nextSpawnTime = Time.time + spawnInterval;
+        timing = FindFirstObjectByType<TimingSystem>();
     }
 
     void Update()
     {
-        // Wait until it’s time again
-        if (Time.time < nextSpawnTime)
-            return;
+        if (!timing) return;
 
-        // Check if we reached max limit
-        int currentEnemies = CountEnemiesAlive();
-        if (currentEnemies >= maxEnemiesAlive)
-        {
-            // Don’t spawn, but retry every frame
-            return;
-        }
+        // only spawn when TimingSystem says it's allowed (per wave)
+        if (!timing.CanSpawnEnemy()) return;
 
-        // Spawn one enemy!
+        if (Time.time < nextSpawnTime) return;
+
         SpawnEnemy();
-
-        // Set next spawn time
         nextSpawnTime = Time.time + spawnInterval;
     }
 
     private void SpawnEnemy()
     {
-        if (enemyPrefabs.Count == 0)
+        if (enemyPrefabs == null || enemyPrefabs.Count == 0)
         {
-            Debug.LogWarning("SpawnPoint has no enemy prefabs assigned!");
+            Debug.LogWarning($"SpawnPoint {name} has no enemy prefabs assigned!");
             return;
         }
 
-        // Pick a random enemy prefab
         GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count)];
-
-        // Spawn at the exact position of the spawner
         Instantiate(prefab, transform.position, Quaternion.identity);
+
+        // tell TimingSystem we spawned one for this wave
+        timing.RegisterEnemySpawned();
     }
 
-    private int CountEnemiesAlive()
-    {
-        // Counts all GameObjects tagged "Enemy"
-        return GameObject.FindGameObjectsWithTag("Enemy").Length;
-    }
-
-    // Optional: draw spawn area in Scene view
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;

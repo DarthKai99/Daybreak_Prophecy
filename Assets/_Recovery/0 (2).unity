@@ -2793,7 +2793,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1333958573}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TimingSystem, Assembly-CSharp
         m_MethodName: OnQuitButton
         m_Mode: 1
@@ -3268,6 +3268,7 @@ GameObject:
   - component: {fileID: 718722067}
   - component: {fileID: 718722066}
   - component: {fileID: 718722065}
+  - component: {fileID: 718722068}
   m_Layer: 5
   m_Name: Endless Mode Button
   m_TagString: Untagged
@@ -3339,7 +3340,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1333958573}
+      - m_Target: {fileID: 718722068}
         m_TargetAssemblyTypeName: TimingSystem, Assembly-CSharp
         m_MethodName: OnStartEndless
         m_Mode: 1
@@ -3348,7 +3349,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: TimingSystem.OnStartEndless
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &718722066
@@ -3389,6 +3390,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 718722063}
   m_CullTransparentMesh: 1
+--- !u!114 &718722068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 718722063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdefd0b2e61ff4b15ae610fd8f07c24f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimingSystem
+  start_panel: {fileID: 826825643}
+  win_panel: {fileID: 43734662}
+  lose_panel: {fileID: 926788780}
+  victory_panel: {fileID: 21360059}
+  pause_panel: {fileID: 274650184}
+  player: {fileID: 655935645}
+  waveLabel: {fileID: 42153761}
+  killLabel: {fileID: 122337803}
+  loseStatsLabel: {fileID: 1361563222}
+  useWaveSystem: 1
+  baseEnemiesPerWave: 10
+  maxWaves: 6
 --- !u!1 &748506779
 GameObject:
   m_ObjectHideFlags: 0
@@ -4913,63 +4938,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 964468453}
   m_CullTransparentMesh: 1
---- !u!1001 &1004329217
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 43699767316542487, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -17.915646
-      objectReference: {fileID: 0}
-    - target: {fileID: 43699767316542487, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 9.676909
-      objectReference: {fileID: 0}
-    - target: {fileID: 43699767316542487, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 43699767316542487, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 43699767316542487, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 43699767316542487, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 43699767316542487, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 43699767316542487, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 43699767316542487, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 43699767316542487, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4828230532494782577, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
-      propertyPath: m_Name
-      value: sponpoint (1)
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 6b53c02e927b947f3b62273d6637262a, type: 3}
 --- !u!1 &1011359978
 GameObject:
   m_ObjectHideFlags: 0
@@ -4982,6 +4950,7 @@ GameObject:
   - component: {fileID: 1011359982}
   - component: {fileID: 1011359981}
   - component: {fileID: 1011359980}
+  - component: {fileID: 1011359983}
   m_Layer: 5
   m_Name: 6-Wave Mode Button
   m_TagString: Untagged
@@ -5053,7 +5022,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1333958573}
+      - m_Target: {fileID: 1011359983}
         m_TargetAssemblyTypeName: TimingSystem, Assembly-CSharp
         m_MethodName: OnStartLimited
         m_Mode: 1
@@ -5062,7 +5031,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: TimingSystem.OnStartLimited
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1011359981
@@ -5103,6 +5072,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1011359978}
   m_CullTransparentMesh: 1
+--- !u!114 &1011359983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011359978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdefd0b2e61ff4b15ae610fd8f07c24f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimingSystem
+  start_panel: {fileID: 826825643}
+  win_panel: {fileID: 43734662}
+  lose_panel: {fileID: 926788780}
+  victory_panel: {fileID: 21360059}
+  pause_panel: {fileID: 274650184}
+  player: {fileID: 655935645}
+  waveLabel: {fileID: 42153761}
+  killLabel: {fileID: 122337803}
+  loseStatsLabel: {fileID: 1361563222}
+  useWaveSystem: 1
+  baseEnemiesPerWave: 10
+  maxWaves: 6
 --- !u!1 &1050764122
 GameObject:
   m_ObjectHideFlags: 0
@@ -6007,11 +6000,12 @@ MonoBehaviour:
   start_panel: {fileID: 826825643}
   win_panel: {fileID: 43734662}
   lose_panel: {fileID: 926788780}
+  victory_panel: {fileID: 21360059}
   pause_panel: {fileID: 274650184}
   player: {fileID: 655935645}
   waveLabel: {fileID: 42153761}
-  killLabel: {fileID: 1236075194}
-  loseStatsLabel: {fileID: 122337803}
+  killLabel: {fileID: 122337803}
+  loseStatsLabel: {fileID: 1361563222}
   useWaveSystem: 1
   baseEnemiesPerWave: 10
   maxWaves: 6
@@ -8621,7 +8615,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1333958573}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TimingSystem, Assembly-CSharp
         m_MethodName: OnRestartButton
         m_Mode: 1
@@ -8963,4 +8957,3 @@ SceneRoots:
   - {fileID: 1868269961}
   - {fileID: 1867376549}
   - {fileID: 1201808462}
-  - {fileID: 1004329217}
