@@ -8,13 +8,15 @@ public class EnemyExplosive : EnemyBase
     [SerializeField] private LayerMask explodeMask;
 
     [Header("Explode When Shot")]
-    [SerializeField] private bool explodeOnShot = true;   // explode before death after N hits
-    [SerializeField] private int hitsToExplodeOnShot = 2; // "a couple" hits
+    [SerializeField] private bool explodeOnShot = true;
+    [SerializeField] private int hitsToExplodeOnShot = 2;
     private int shotHitsAccum = 0;
+
+    private bool hasExploded = false;  // <<< IMPORTANT FIX
 
     protected override void Move(Vector2 dir, float dist)
     {
-        rb.linearVelocity = dir * moveSpeed; // use velocity
+        rb.linearVelocity = dir * moveSpeed;
     }
 
     public override void TakeDamage(int amount)
@@ -23,60 +25,75 @@ public class EnemyExplosive : EnemyBase
 
         hp -= amount;
 
-        // explode while still alive after N hits
+        // If still alive, check "explode-on-shot"
         if (explodeOnShot && hp > 0)
         {
             shotHitsAccum++;
             if (shotHitsAccum >= hitsToExplodeOnShot)
             {
-                Explode();       // AoE only
-                base.Die();      // count kill + destroy
+                SafeExplodeAndDie();
                 return;
             }
         }
 
-        // died from damage -> explode on death
+        // Explode on normal death
         if (hp <= 0)
         {
-            Explode();           // AoE only
-            base.Die();          // count kill + destroy
+            SafeExplodeAndDie();
         }
     }
 
+    // PLAYER contact = explode
     void OnCollisionEnter2D(Collision2D col)  { TryExplode(col.gameObject); }
     void OnTriggerEnter2D(Collider2D col)     { TryExplode(col.gameObject); }
 
-    // Contact with PLAYER explodes immediately
     void TryExplode(GameObject other)
     {
         if (isDead) return;
         if (!other.GetComponent<PlayerStats>()) return;
 
-        Explode();               // AoE only
-        base.Die();              // count kill + destroy
+        SafeExplodeAndDie();
     }
 
-    // Do NOT set isDead or Destroy here!
+    /// SAFE explosion wrapper to prevent recursion
+    private void SafeExplodeAndDie()
+    {
+        if (isDead) return;
+        if (hasExploded) return;  // <<< prevents multiple explosions
+
+        hasExploded = true;       // <<< important
+        Explode();                // AoE damage
+
+        base.Die();               // award XP, report kill, destroy object
+    }
+
     void Explode()
     {
-        // AoE damage to player + enemies
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, explodeRadius, explodeMask);
+
         foreach (var h in hits)
         {
             if (!h) continue;
 
+            // damage player
             var ps = h.GetComponent<PlayerStats>();
-            if (ps) ps.TakeDamage(explodeDamage);
+            if (ps)
+            {
+                ps.TakeDamage(explodeDamage);
+            }
 
+            // damage other enemies
             var otherEnemy = h.GetComponent<EnemyBase>();
             if (otherEnemy && otherEnemy != this)
+            {
                 otherEnemy.TakeDamage(explodeDamage);
+            }
         }
 
-        // Optional: VFX/SFX here
+        // optional VFX/SFX
     }
 
-    void OnDrawGizmosSelected()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, explodeRadius);

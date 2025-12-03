@@ -108,7 +108,6 @@ MonoBehaviour:
   hp: 3
   moveSpeed: 2.5
   chaseRange: 20
-  onlyProjectileDamage: 1
   useDrops: 1
   dropChance: 0.25
   hpShare: 0.5
@@ -116,12 +115,17 @@ MonoBehaviour:
   mpPickupPrefab: {fileID: 5021804043057128019, guid: d857643bd30a8409c97a6dd0ccdc82a7, type: 3}
   chooseEligibleAtSpawn: 0
   spawnEligibleChance: 0.5
+  enableWander: 1
+  wanderRadius: 5
+  wanderSpeedMultiplier: 0.6
+  minWanderInterval: 1.5
+  maxWanderInterval: 3.5
   projectilePrefab: {fileID: 6428530216226961045, guid: 4104ce550d1ac4cbcac02c94028d63c9, type: 3}
   desiredRange: 6
   rangeSlack: 1.5
   backAwayBoost: 1.2
   fireCooldown: 1
-  projectileDamage: 1
+  projectileDamage: 2
   projectileSpeed: 10
 --- !u!61 &8428753064963525560
 BoxCollider2D:

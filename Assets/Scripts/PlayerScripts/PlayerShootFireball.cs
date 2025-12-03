@@ -56,5 +56,11 @@ public class PlayerShootFireball : MonoBehaviour
         proj.Init(dir, damage, gameObject);
 
         nextShootTime = Time.time + cooldown;
+
+        //  PLAY FIREBALL SFX
+        if (AudioManager.Instance)
+        {
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.fireballClip);
+        }
     }
 }

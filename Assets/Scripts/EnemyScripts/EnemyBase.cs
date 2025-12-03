@@ -143,6 +143,12 @@ public class EnemyBase : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
+        // PLAY ENEMY DEATH SFX (ONCE)
+        if (AudioManager.Instance)
+        {
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.enemyDeathClip);
+        }
+
         var ps = FindFirstObjectByType<PlayerStats>();
         if (ps) ps.AddXP(5);
 

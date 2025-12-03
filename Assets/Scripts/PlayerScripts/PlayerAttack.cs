@@ -51,5 +51,11 @@ public class PlayerAttack : MonoBehaviour
         var proj = go.GetComponent<AttackHitbox>();
         if (!proj) proj = go.AddComponent<AttackHitbox>();
         proj.Init(dir, damage, gameObject);
+
+        // PLAY NORMAL SHOOT SFX
+        if (AudioManager.Instance)
+        {
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.shootClip);
+        }
     }
 }
