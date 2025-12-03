@@ -80,13 +80,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-<<<<<<< Updated upstream:Assets/EnemyNormal.prefab
-  m_SortingLayerID: 207896019
-  m_SortingLayer: 1
-=======
   m_SortingLayerID: -2106052119
   m_SortingLayer: 3
->>>>>>> Stashed changes:Assets/prefab/EnemyNormal.prefab
   m_SortingOrder: 0
   m_Sprite: {fileID: -7953338109569239842, guid: 97ac8bb45ac60294db90d0d00096a558, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -99,8 +94,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
-<<<<<<< Updated upstream:Assets/EnemyNormal.prefab
-=======
 --- !u!114 &1368298748131747079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,7 +119,6 @@ MonoBehaviour:
   spawnEligibleChance: 0.5
   touchDamage: 1
   touchDamageCooldown: 0.5
->>>>>>> Stashed changes:Assets/prefab/EnemyNormal.prefab
 --- !u!61 &1479698955088807127
 BoxCollider2D:
   m_ObjectHideFlags: 0
