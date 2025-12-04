@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2989947501890767530}
   - component: {fileID: 7264825561901842778}
-  - component: {fileID: 5087205677285450175}
   - component: {fileID: 8428753064963525560}
   - component: {fileID: 6234112267736160081}
   m_Layer: 0
@@ -93,36 +92,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &5087205677285450175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3616851652413780705}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a87ee3f943bf94c10aaa6ee15d6a6e71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyRanged
-  hp: 3
-  moveSpeed: 2.5
-  chaseRange: 20
-  onlyProjectileDamage: 1
-  useDrops: 1
-  dropChance: 0.25
-  hpShare: 0.5
-  hpPickupPrefab: {fileID: 427810894573171162, guid: bdfc4cbeb8ad342a5993a12b9b11e3b4, type: 3}
-  mpPickupPrefab: {fileID: 5021804043057128019, guid: d857643bd30a8409c97a6dd0ccdc82a7, type: 3}
-  chooseEligibleAtSpawn: 0
-  spawnEligibleChance: 0.5
-  projectilePrefab: {fileID: 6428530216226961045, guid: 4104ce550d1ac4cbcac02c94028d63c9, type: 3}
-  desiredRange: 6
-  rangeSlack: 1.5
-  backAwayBoost: 1.2
-  fireCooldown: 1
-  projectileDamage: 1
-  projectileSpeed: 10
 --- !u!61 &8428753064963525560
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -184,7 +153,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
