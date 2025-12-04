@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 9126320272407857156}
   - component: {fileID: 5078259906362371004}
   - component: {fileID: 7253342291430418907}
-  - component: {fileID: 5883885341533587592}
+  - component: {fileID: 479093509362990305}
   - component: {fileID: 7879635587348673360}
+  - component: {fileID: 6094259495603844089}
   m_Layer: 0
   m_Name: fireball
   m_TagString: bullet
@@ -120,8 +121,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &5883885341533587592
-BoxCollider2D:
+--- !u!60 &479093509362990305
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -164,8 +165,15 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.22999999, y: 0.095}
+      - {x: -0.22999999, y: -0.095}
+      - {x: 0.19, y: -0.095}
+      - {x: 0.22999999, y: -0.024999999}
+      - {x: 0.22999999, y: 0.015}
+      - {x: 0.11, y: 0.095}
+  m_UseDelaunayMesh: 0
 --- !u!114 &7879635587348673360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,3 +191,16 @@ MonoBehaviour:
   enemyMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &6094259495603844089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5618106231489262378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69076385ee9401342bec17e6b13ce81f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileFaceVelocityDirection
+  angleOffset: 0

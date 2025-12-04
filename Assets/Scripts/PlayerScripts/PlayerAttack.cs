@@ -25,7 +25,7 @@ public class PlayerAttack : MonoBehaviour
         if (Mouse.current == null || projectilePrefab == null) return;
 
         bool fireHeld = Mouse.current.leftButton.isPressed; // hold to shoot with LMB
-        if (gunLoop) gunLoop.SetFiring(fireHeld); // This is something for the Gun Audio
+        if (gunLoop) gunLoop.SetFiring(fireHeld); // This is for the Gun Audio
         if (!fireHeld) return;
 
         if (Time.time >= nextShotTime)
