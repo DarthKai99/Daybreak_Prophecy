@@ -9,6 +9,8 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private float fireRate = 3f; // shots per second (minigun)
     [SerializeField] private int damage = 1;
     [SerializeField] private int mpCostPerShot = 0;
+    [SerializeField] private MachineGunLoopAudio gunLoop;
+
 
     private PlayerStats stats;
     private float nextShotTime;
@@ -23,6 +25,7 @@ public class PlayerAttack : MonoBehaviour
         if (Mouse.current == null || projectilePrefab == null) return;
 
         bool fireHeld = Mouse.current.leftButton.isPressed; // hold to shoot with LMB
+        if (gunLoop) gunLoop.SetFiring(fireHeld); // This is something for the Gun Audio
         if (!fireHeld) return;
 
         if (Time.time >= nextShotTime)
