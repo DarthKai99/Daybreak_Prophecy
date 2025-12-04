@@ -24,12 +24,6 @@ public class AudioManager : MonoBehaviour
 
     void Awake()
     {
-        // Singleton pattern: only one AudioManager in the whole game
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
