@@ -79,8 +79,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 457828777
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.19744569, g: 0.615453, b: 0.8207547, a: 1}
@@ -108,7 +108,6 @@ MonoBehaviour:
   hp: 3
   moveSpeed: 2.5
   chaseRange: 20
-  onlyProjectileDamage: 0
   useDrops: 1
   dropChance: 0.25
   hpShare: 0.5
@@ -116,6 +115,11 @@ MonoBehaviour:
   mpPickupPrefab: {fileID: 5021804043057128019, guid: d857643bd30a8409c97a6dd0ccdc82a7, type: 3}
   chooseEligibleAtSpawn: 0
   spawnEligibleChance: 0.5
+  enableWander: 1
+  wanderRadius: 5
+  wanderSpeedMultiplier: 0.6
+  minWanderInterval: 1.5
+  maxWanderInterval: 3.5
   touchDamage: 1
   touchDamageCooldown: 0.5
 --- !u!61 &1479698955088807127
