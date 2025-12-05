@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyExplosive
   hp: 15
-  moveSpeed: 14
+  moveSpeed: 10
   chaseRange: 20
   useDrops: 1
   dropChance: 0.25
@@ -120,6 +120,12 @@ MonoBehaviour:
   wanderSpeedMultiplier: 0.6
   minWanderInterval: 1.5
   maxWanderInterval: 3.5
+  enableAvoidance: 1
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  avoidDistance: 1
+  sideCheckDistance: 0.75
   explodeRadius: 2.5
   explodeDamage: 4
   explodeMask:
