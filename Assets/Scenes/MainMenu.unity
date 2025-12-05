@@ -1088,7 +1088,7 @@ MonoBehaviour:
   shootClip: {fileID: 0}
   fireballClip: {fileID: 8300000, guid: 72f2183c0068f4943ac39e817e73ca22, type: 3}
   missileClip: {fileID: 8300000, guid: 72f2183c0068f4943ac39e817e73ca22, type: 3}
-  enemyDeathClip: {fileID: 8300000, guid: 882028ad1b83b48dd8747bf3076c451c, type: 3}
+  enemyDeathClip: {fileID: 8300000, guid: 12352fb1d2026408f94b87be178dae7b, type: 3}
   enemyshoot: {fileID: 8300000, guid: 1c4ab608476064ca39c5351bd1cc921b, type: 3}
 --- !u!4 &1418565297
 Transform:
