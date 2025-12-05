@@ -45,14 +45,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: New Layer 1
+  - name: Behind Player
     uniqueID: 457828777
     locked: 0
-  - name: New Layer 2
+  - name: Foliage Layer
     uniqueID: 2188915177
     locked: 0
-  - name: New Layer 3
+  - name: At Level
     uniqueID: 1022945621
+    locked: 0
+  - name: Over Player
+    uniqueID: 1863284435
     locked: 0
   m_RenderingLayers:
   - Default

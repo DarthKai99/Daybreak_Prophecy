@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyNormal
   hp: 30
-  moveSpeed: 2.5
+  moveSpeed: 17
   chaseRange: 20
   useDrops: 1
   dropChance: 0.25
