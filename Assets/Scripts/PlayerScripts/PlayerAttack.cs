@@ -24,6 +24,13 @@ public class PlayerAttack : MonoBehaviour
     {
         if (Mouse.current == null || projectilePrefab == null) return;
 
+        // if game is paused, stop firing & sound
+        if (Time.timeScale == 0f)
+        {
+            if (gunLoop) gunLoop.SetFiring(false);
+            return;
+        }
+
         bool fireHeld = Mouse.current.leftButton.isPressed; // hold to shoot with LMB
         if (gunLoop) gunLoop.SetFiring(fireHeld); // This is for the Gun Audio
         if (!fireHeld) return;

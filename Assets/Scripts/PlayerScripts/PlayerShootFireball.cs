@@ -24,6 +24,8 @@ public class PlayerShootFireball : MonoBehaviour
         // Ensure InputSystem and prefab exist
         if (Mouse.current == null || fireballPrefab == null) return;
 
+        if (Time.timeScale == 0f) return;  // no firing while paused
+
         // press F (or hold) to shoot
         //isPressed if you want it to hold to shoot
         if (Keyboard.current.fKey.wasPressedThisFrame)

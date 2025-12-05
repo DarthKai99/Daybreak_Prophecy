@@ -22,6 +22,8 @@ public class PlayerShootMissile : MonoBehaviour
     {
         if (Mouse.current == null || missilePrefab == null) return;
 
+        if (Time.timeScale == 0f) return;  // no firing while paused
+
         // Press M to fire a missile
         if (Keyboard.current.mKey.wasPressedThisFrame)
         {
@@ -58,11 +60,11 @@ public class PlayerShootMissile : MonoBehaviour
 
         nextShootTime = Time.time + cooldown;
 
-            // 🔊 PLAY MISSILE SFX
-    if (AudioManager.Instance)
-    {
-        AudioManager.Instance.PlaySFX(AudioManager.Instance.missileClip);
-    }
+        // PLAY MISSILE SFX
+        if (AudioManager.Instance)
+        {
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.missileClip);
+        }
 
 
     }

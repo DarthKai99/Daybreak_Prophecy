@@ -19,28 +19,37 @@ public class AudioManager : MonoBehaviour
     public AudioClip missileClip;     // missile
     public AudioClip enemyDeathClip;  // enemy death
 
+    public AudioClip enemyshoot; //enemy shoot
+
     private AudioSource musicSource;
     private AudioSource sfxSource;
 
     void Awake()
     {
 
+        // SINGLETON GUARD
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
         // Create two audio sources: one for music, one for SFX
         musicSource = gameObject.AddComponent<AudioSource>();
-        sfxSource = gameObject.AddComponent<AudioSource>();
+        sfxSource   = gameObject.AddComponent<AudioSource>();
 
         musicSource.loop = true;
         musicSource.playOnAwake = false;
-        sfxSource.playOnAwake = false;
+        sfxSource.playOnAwake   = false;
 
         musicSource.volume = musicVolume;
-        sfxSource.volume = sfxVolume;
+        sfxSource.volume   = sfxVolume;
 
-        // Listen for scene changes to switch music
         SceneManager.sceneLoaded += OnSceneLoaded;
+
     }
 
     void OnDestroy()
@@ -69,9 +78,23 @@ public class AudioManager : MonoBehaviour
         if (musicSource.clip == clip && musicSource.isPlaying)
             return; // already playing this track
 
+        musicSource.Stop();      // ensure old track stops
         musicSource.clip = clip;
         musicSource.volume = musicVolume;
         musicSource.Play();
+    }
+
+        //NEW: music pause / resume for the pause menu
+    public void PauseMusic()
+    {
+        if (musicSource && musicSource.isPlaying)
+            musicSource.Pause();
+    }
+
+    public void ResumeMusic()
+    {
+        if (musicSource && musicSource.clip != null)
+            musicSource.UnPause();
     }
 
     public void PlaySFX(AudioClip clip)

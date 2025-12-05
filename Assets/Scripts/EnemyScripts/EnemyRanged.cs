@@ -11,6 +11,8 @@ public class EnemyRanged : EnemyBase
     [SerializeField] private int projectileDamage = 1;
     [SerializeField] private float projectileSpeed = 10f;
 
+    [SerializeField] private MachineGunLoopAudio gunLoop;
+
     private float nextShootTime = 0f;
 
     protected override void Move(Vector2 dirToPlayer, float dist)
@@ -55,5 +57,10 @@ public class EnemyRanged : EnemyBase
         var ep = go.GetComponent<EnemyProjectile>();
         if (!ep) ep = go.AddComponent<EnemyProjectile>();
         ep.Init(dir, projectileSpeed, projectileDamage, gameObject);
+
+        if (AudioManager.Instance)
+        {
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.enemyshoot);
+        }
     }
 }

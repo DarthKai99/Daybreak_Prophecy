@@ -228,6 +228,10 @@ public class TimingSystem : MonoBehaviour
         gamePaused = false;
         Time.timeScale = 1f;
         if (pause_panel) pause_panel.SetActive(false);
+
+        // resume music
+        if (AudioManager.Instance)
+            AudioManager.Instance.ResumeMusic();
     }
 
     public void PauseGame()
@@ -236,6 +240,10 @@ public class TimingSystem : MonoBehaviour
         gamePaused = true;
         Time.timeScale = 0f;
         if (pause_panel) pause_panel.SetActive(true);
+
+        // pause music
+        if (AudioManager.Instance)
+            AudioManager.Instance.PauseMusic();
     }
 
     public void OnResumeButton() => ResumeGame();

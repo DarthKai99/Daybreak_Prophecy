@@ -29,6 +29,13 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] private float minWanderInterval = 1.5f;
     [SerializeField] private float maxWanderInterval = 3.5f;
 
+
+    [Header("Obstacle Avoidance")]
+    [SerializeField] private bool enableAvoidance = true;
+    [SerializeField] private LayerMask obstacleMask;  // set to Obstacle layer in Inspector
+    [SerializeField] private float avoidDistance = 1.0f;   // how far ahead to check
+    [SerializeField] private float sideCheckDistance = 0.75f; // side rays length
+
     protected Rigidbody2D rb;
     protected Transform player;
     protected bool isDead = false;
@@ -103,7 +110,13 @@ public class EnemyBase : MonoBehaviour
     // Default "chase" move; children override if needed
     protected virtual void Move(Vector2 dirToPlayer, float dist)
     {
-        rb.linearVelocity = dirToPlayer * moveSpeed;
+        Vector2 desiredDir = dirToPlayer.normalized;
+
+        // Apply obstacle avoidance
+        desiredDir = ApplyAvoidance(desiredDir);
+
+        // Use the avoided direction, NOT dirToPlayer
+        rb.linearVelocity = desiredDir * moveSpeed;
     }
 
     // --- Wander logic ---
@@ -125,6 +138,7 @@ public class EnemyBase : MonoBehaviour
         }
 
         Vector2 dir = (wanderTarget - pos).normalized;
+         dir = ApplyAvoidance(dir); // <--- add this
         rb.linearVelocity = dir * moveSpeed * wanderSpeedMultiplier;
     }
 
@@ -150,7 +164,7 @@ public class EnemyBase : MonoBehaviour
         }
 
         var ps = FindFirstObjectByType<PlayerStats>();
-        if (ps) ps.AddXP(5);
+        if (ps) ps.AddXP(2);
 
         var ts = FindFirstObjectByType<TimingSystem>();
         if (ts) ts.ReportEnemyKilled();
@@ -177,6 +191,58 @@ public class EnemyBase : MonoBehaviour
 
         Instantiate(prefab, transform.position, Quaternion.identity);
     }
+
+    // Adjust desiredDir to steer around obstacles
+    protected Vector2 ApplyAvoidance(Vector2 desiredDir)
+    {
+        if (!enableAvoidance) return desiredDir;
+        if (desiredDir.sqrMagnitude < 0.0001f) return desiredDir;
+
+        Vector2 pos = transform.position;
+        desiredDir = desiredDir.normalized;
+
+        // Ray straight ahead
+        RaycastHit2D hitFront = Physics2D.Raycast(pos, desiredDir, avoidDistance, obstacleMask);
+        if (!hitFront) return desiredDir; // nothing in front
+
+        // Directions to left and right (perpendicular)
+        Vector2 leftDir  = new Vector2(-desiredDir.y,  desiredDir.x);
+        Vector2 rightDir = new Vector2( desiredDir.y, -desiredDir.x);
+
+        bool leftBlocked  = Physics2D.Raycast(pos, leftDir,  sideCheckDistance, obstacleMask);
+        bool rightBlocked = Physics2D.Raycast(pos, rightDir, sideCheckDistance, obstacleMask);
+
+        // CASE 1: front blocked, but only one side blocked -> go to the free side
+        if (!leftBlocked && rightBlocked)
+        {
+            return leftDir;   // left is open
+        }
+        if (!rightBlocked && leftBlocked)
+        {
+            return rightDir;  // right is open
+        }
+
+        // CASE 2: front blocked, both sides free -> slide along obstacle
+        if (!leftBlocked && !rightBlocked)
+        {
+            // slide along the obstacle surface using its normal
+            Vector2 normal = hitFront.normal;                // points away from wall
+            Vector2 slideDir = Vector2.Perpendicular(normal); // perpendicular to wall
+
+            // choose the slide direction that's closer to where we wanted to go
+            if (Vector2.Dot(slideDir, desiredDir) < 0)
+                slideDir = -slideDir;
+
+            return slideDir.normalized;
+        }
+
+        // CASE 3: front + both sides blocked -> BACK OUT
+        // e.g. wedged between two blocks, dead-end corner, etc.
+        return -desiredDir;
+
+    }
+
+
 
     // --- Gizmos: visualize chase + wander radius ---
     private void OnDrawGizmosSelected()
