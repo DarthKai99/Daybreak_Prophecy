@@ -1,12 +1,12 @@
 Game Title: Prophecy: Daybreak
 
 Made by:
-Aleen Bataresh,
-Alvaro Mena,
-Conner Moyer,
-David Cruz-Hernandez,
-Jack Sadler,
-Kai Ingram
+- Aleen Bataresh,
+- Alvaro Mena,
+- Conner Moyer,
+- David Cruz-Hernandez,
+- Jack Sadler,
+- Kai Ingram
 
 Made in Unity version 6000.2.12f1
 
