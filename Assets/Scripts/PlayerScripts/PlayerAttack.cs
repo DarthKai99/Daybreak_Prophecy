@@ -3,36 +3,69 @@ using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [SerializeField] private GameObject attackPrefab; // Prefab with AttackHitbox + trigger collider
-    [SerializeField] private float distance = 0.6f;   // How far in front of the player
-    [SerializeField] private float lifetime = 0.1f;   // How long the hitbox exists
+    [Header("Projectile Settings")]
+    [SerializeField] private GameObject projectilePrefab; // your bullet prefab (with AttackHitbox above)
+    [SerializeField] private float spawnOffset = 0.6f;
+    [SerializeField] private float fireRate = 3f; // shots per second (minigun)
     [SerializeField] private int damage = 1;
+    [SerializeField] private int mpCostPerShot = 0;
+    [SerializeField] private MachineGunLoopAudio gunLoop;
 
-    private Player_movement mover;
+
+    private PlayerStats stats;
+    private float nextShotTime;
 
     void Awake()
     {
-        mover = GetComponent<Player_movement>();
+        stats = GetComponent<PlayerStats>();
     }
 
     void Update()
     {
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-            DoAttack();
+        if (Mouse.current == null || projectilePrefab == null) return;
+
+        // if game is paused, stop firing & sound
+        if (Time.timeScale == 0f)
+        {
+            if (gunLoop) gunLoop.SetFiring(false);
+            return;
+        }
+
+        bool fireHeld = Mouse.current.leftButton.isPressed; // hold to shoot with LMB
+        if (gunLoop) gunLoop.SetFiring(fireHeld); // This is for the Gun Audio
+        if (!fireHeld) return;
+
+        if (Time.time >= nextShotTime)
+        {
+            ShootTowardMouse();
+            nextShotTime = Time.time + (1f / Mathf.Max(1f, fireRate));
+        }
     }
 
-    void DoAttack()
+    void ShootTowardMouse()
     {
-        if (!attackPrefab) return;
+        if (stats && mpCostPerShot > 0 && !stats.UseMP(mpCostPerShot)) return;
 
-        // Use last facing direction (defaults to right if you never moved)
-        Vector2 dir = mover ? (mover.FacingDir == Vector2.zero ? Vector2.right : mover.FacingDir) : Vector2.right;
-        dir = new Vector2(Mathf.Round(dir.x), Mathf.Round(dir.y)); // ensure 4-way placement
-        if (dir == Vector2.zero) dir = Vector2.right;
+        // Convert mouse position (screen) to world position
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        mouseWorld.z = 0f;
 
-        Vector3 spawnPos = transform.position + (Vector3)dir.normalized * distance;
-        var go = Instantiate(attackPrefab, spawnPos, Quaternion.identity);
-        var hb = go.GetComponent<AttackHitbox>();
-        if (hb) hb.Init(damage, lifetime, gameObject);
+        // Direction from player to mouse
+        Vector2 dir = (mouseWorld - transform.position).normalized;
+
+        // Spawn projectile slightly in front of the player
+        Vector3 spawnPos = transform.position + (Vector3)(dir * spawnOffset);
+        var go = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
+
+        // INSTEAD of FireballProjectile:
+        var proj = go.GetComponent<AttackHitbox>();
+        if (!proj) proj = go.AddComponent<AttackHitbox>();
+        proj.Init(dir, damage, gameObject);
+
+        // PLAY NORMAL SHOOT SFX
+        if (AudioManager.Instance)
+        {
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.shootClip);
+        }
     }
 }

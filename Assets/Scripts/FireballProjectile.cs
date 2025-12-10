@@ -5,64 +5,79 @@ using UnityEngine;
 
 public class FireballProjectile : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f;
+    [SerializeField] private float speed = 16f;
     [SerializeField] private float lifetime = 2f;
+    [SerializeField] private LayerMask enemyMask; // optional, if you want layer filtering
 
     private Rigidbody2D rb;
+    private Collider2D col;
     private GameObject owner;
     private int damage;
+
+    private bool hasHit = false;   // prevent multiple hits
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        col = GetComponent<Collider2D>();
+
+        rb.gravityScale = 0f;
+        rb.linearDamping = 0f;
+        rb.angularDamping = 0f;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        col.isTrigger = true; // projectiles as triggers = easiest
     }
 
     public void Init(Vector2 dir, int dmg, GameObject ownerGO)
     {
-        damage = dmg;
         owner = ownerGO;
+        damage = dmg;
 
-        // physics setup (just in case not set on prefab)
-        rb.gravityScale = 0f;
-        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        // Don't hit the shooter
+        foreach (var oc in owner.GetComponentsInChildren<Collider2D>())
+            Physics2D.IgnoreCollision(col, oc, true);
 
-        // launch
         rb.linearVelocity = dir.normalized * speed;
-
-        // auto-despawn
         Destroy(gameObject, lifetime);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject == owner) return;
+        if (hasHit) return;
+        if (!other || other.gameObject == owner) return;
 
-        // Hit enemy?
-        var enemy = other.GetComponent<Enemy>();
+        GameObject go = other.gameObject;
+
+        // --- NEW: collide with enemy projectile -> both die ---
+        var enemyProj = other.GetComponentInParent<EnemyProjectile>();
+        if (enemyProj != null)
+        {
+            hasHit = true;
+            Destroy(enemyProj.gameObject);
+            Destroy(gameObject);
+            return;
+        }
+        // --- END NEW ---
+
+        // 1) Enemy? -> damage + destroy
+        var enemy = go.GetComponentInParent<EnemyBase>();
         if (enemy != null)
         {
+            hasHit = true;
             enemy.TakeDamage(damage);
             Destroy(gameObject);
             return;
         }
 
-        // Hit something else that's not pass-through? (e.g., walls with triggers)
-        // If you use non-trigger walls, also add OnCollisionEnter2D below.
+        // 2) Wall / any solid collider? -> destroy projectile
         if (!other.isTrigger)
         {
+            hasHit = true;
             Destroy(gameObject);
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject == owner) return;
-
-        var enemy = collision.gameObject.GetComponent<Enemy>();
-        if (enemy != null)
-        {
-            enemy.TakeDamage(damage);
-        }
-        Destroy(gameObject);
-    }
+    
 }

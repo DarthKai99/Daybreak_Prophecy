@@ -2,8 +2,12 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
-  tags: []
+  serializedVersion: 3
+  tags:
+  - Enemy
+  - Wall
+  - bullet
+  - Fireball
   layers:
   - Default
   - TransparentFX
@@ -41,3 +45,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Behind Player
+    uniqueID: 457828777
+    locked: 0
+  - name: Foliage Layer
+    uniqueID: 2188915177
+    locked: 0
+  - name: At Level
+    uniqueID: 1022945621
+    locked: 0
+  - name: Over Player
+    uniqueID: 1863284435
+    locked: 0
+  m_RenderingLayers:
+  - Default
