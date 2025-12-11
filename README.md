@@ -15,9 +15,11 @@ If the player passes all waves, they will win the game and be presented with a v
 - **Jack Sadler**, who handled GitHub maintenance, project documentation creation such as the versions of the GDD and Game Presentation PowerPoint, and Enemy Art Asset creation
 - **Kai Ingram**, who assisted in scripting Player Weapons.
 
+**Credits:**  
 Made in Unity version 6000.2.12f1
 
+Map assets sourced from "City Pack - Top Down - Pixel Art" by NYKNCK on the Unity Asset Store: https://assetstore-fallback.unity.com/packages/2d/textures-materials/city-pack-top-down-pixel-art-195403  
 
-  
+Player Tank Avatar Asset sourced from "Tanks & Turrets - FREE" by Lootzifr on the Unity Asset Store: https://assetstore.unity.com/packages/2d/tanks-turrets-free-216890  
 
- 
+Background Music and Sound Effects sourced from copyright free tracks on Pixabay: https://pixabay.com/music/  
